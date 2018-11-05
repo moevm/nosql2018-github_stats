@@ -1,4 +1,4 @@
-package example.model;
+package example.model.github;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -7,12 +7,13 @@ import org.springframework.data.annotation.Id;
 import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Commit {
+public class GithubCommit {
     @Id
     @JsonProperty("node_id")
-    private String nodeId;
+    private String id;
 
     private String date;
+
     private String contributor;
 
     public String getDate() {
@@ -31,12 +32,12 @@ public class Commit {
         this.contributor = contributor;
     }
 
-    public String getNodeId() {
-        return nodeId;
+    public String getId() {
+        return id;
     }
 
-    public void setNodeId(String nodeId) {
-        this.nodeId = nodeId;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @SuppressWarnings("unchecked")
@@ -45,13 +46,5 @@ public class Commit {
         Map<String, String> author = (Map<String,String>)commit.get("author");
         this.date = author.get("date");
         this.contributor = author.get("name");
-    }
-
-    @Override
-    public String toString() {
-        return "Commit{" +
-                ", date='" + date + '\'' +
-                ", contributor='" + contributor + '\'' +
-                '}' + "\n";
     }
 }
