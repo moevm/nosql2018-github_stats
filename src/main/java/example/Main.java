@@ -1,7 +1,9 @@
 package example;
 
-import example.model.Customer;
-import example.repository.CustomerRepository;
+import example.converters.JsonCommitsToPojoCommitsConverter;
+import example.model.Commit;
+import example.repository.CommitsRepository;
+import example.rest.RestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +15,7 @@ import java.util.List;
 public class Main implements CommandLineRunner {
 
     @Autowired
-    private CustomerRepository repository;
+    private CommitsRepository repository;
 
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
@@ -22,21 +24,25 @@ public class Main implements CommandLineRunner {
     @Override
     public void run(String... args) {
 
-        Customer newCus = new Customer("Alice", "Selezneva");
+//        Scanner inputReader = new Scanner(System.in);
+//        System.out.println("Set owner name");
+//        String owner = inputReader.nextLine();
+//        System.out.println("Set repo name");
+//        String repo = inputReader.nextLine();
 
-        //Insert
-        repository.insert(newCus);
+        String owner = "vender98";
+        String repo = "oop";
 
-        //Update
-        newCus.lastName = "p";
-        repository.save(newCus);
+        String commitsJson = RestClient.get("/repos/" + owner + "/" + repo + "/commits");
+        List<Commit> commits = JsonCommitsToPojoCommitsConverter.convertMultipleCommits(commitsJson);
 
-        //Find
-        List customers = repository.customQueryFindExample();
-        customers.forEach(System.out::println);
+        repository.saveAll(commits);
 
-        //Delete
-        repository.customQueryDeleteExample();
+        System.out.println(repository.findAll());
+        System.out.println(repository.customQueryFindExample());
+
+        repository.deleteAll();
+
 
     }
 

@@ -1,4 +1,0 @@
-2018-09-27 20:43:06.253 DEBUG 10388 --- [main] o.s.data.mongodb.core.MongoTemplate      : Inserting Document containing fields: [firstName, lastName, _class] in collection: customer
-2018-09-27 20:43:06.289 DEBUG 10388 --- [main] o.s.data.mongodb.core.MongoTemplate      : Saving Document containing fields: [_id, firstName, lastName, _class]
-2018-09-27 20:43:06.316 DEBUG 10388 --- [main] o.s.data.mongodb.core.MongoTemplate      : find using query: { "firstName" : "Alice" } fields: Document{{}} for class: class example.model.Customer in collection: customer
-2018-09-27 20:43:06.335 DEBUG 10388 --- [main] o.s.data.mongodb.core.MongoTemplate      : Remove using query: { "firstName" : "Alice" } in collection: customer.
