@@ -1,12 +1,13 @@
 package example.rest;
 
+import example.constants.Constant;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-public class RestClient {
+public class GithubRestClient {
 
-    private static final String API_URL = "https://api.github.com";
+    private static final String API_URL = Constant.API_URL;
 
     private static final RestTemplate restTemplate = new RestTemplate();
 

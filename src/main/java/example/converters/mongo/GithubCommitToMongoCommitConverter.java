@@ -7,6 +7,6 @@ import javax.xml.bind.DatatypeConverter;
 
 public class GithubCommitToMongoCommitConverter {
     public static MongoCommit convert(GithubCommit githubCommit){
-        return new MongoCommit(githubCommit.getId(), DatatypeConverter.parseDate(githubCommit.getDate()).getTime());
+        return new MongoCommit(DatatypeConverter.parseDate(githubCommit.getDate()).getTime());
     }
 }

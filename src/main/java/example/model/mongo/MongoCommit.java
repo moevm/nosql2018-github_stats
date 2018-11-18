@@ -7,8 +7,6 @@ import java.util.Date;
 
 public class MongoCommit {
     @Id
-    private String id;
-
     private Date date;
 
     public Date getDate() {
@@ -19,16 +17,7 @@ public class MongoCommit {
         this.date = date;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public MongoCommit(String id, Date date) {
-        this.id = id;
+    public MongoCommit(Date date) {
         this.date = date;
     }
 }

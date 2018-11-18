@@ -1,5 +1,6 @@
 package example.model.mongo;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
@@ -7,19 +8,21 @@ import java.util.List;
 
 public class Course {
     @Id
+    private ObjectId id;
+
     private String name;
 
     private List<Repository> repositories;
 
-    public String getLastUpdated() {
-        return lastUpdated;
+    private String lastUpdate;
+
+    public String getLastUpdate() {
+        return lastUpdate;
     }
 
-    public void setLastUpdated(String lastUpdated) {
-        this.lastUpdated = lastUpdated;
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
-
-    private String lastUpdated;
 
     public Course(){
         this.repositories = new ArrayList<>();
@@ -39,5 +42,13 @@ public class Course {
 
     public void setRepositories(List<Repository> repositories) {
         this.repositories = repositories;
+    }
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
     }
 }

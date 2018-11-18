@@ -7,25 +7,12 @@ import java.util.List;
 
 public class JsonCommitToGithubCommitConverter {
 
-
-    public static GithubCommit convertSingleCommit (String jsonCommit){
-        ObjectMapper mapper = new ObjectMapper();
-        GithubCommit githubCommit;
-        try {
-            githubCommit = mapper.readValue(jsonCommit, GithubCommit.class);
-            return githubCommit;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static List<GithubCommit> convertMultipleCommits (String jsonCommits){
+    public static List<GithubCommit> convert (String jsonCommits){
         ObjectMapper mapper = new ObjectMapper();
         List<GithubCommit> githubCommits;
         try {
             githubCommits = mapper.readValue(jsonCommits, mapper.getTypeFactory().constructCollectionType(List.class, GithubCommit.class));
-            return githubCommits;
+            return githubCommits.size() > 0 ? githubCommits : null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

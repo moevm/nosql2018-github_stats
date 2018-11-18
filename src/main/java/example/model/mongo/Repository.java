@@ -1,5 +1,6 @@
 package example.model.mongo;
 
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
@@ -7,11 +8,21 @@ import java.util.List;
 
 public class Repository {
     @Id
+    private ObjectId id;
+
     private String name;
 
     private String owner;
 
     private List<Contributor> contributors;
+
+    public ObjectId getId() {
+        return id;
+    }
+
+    public void setId(ObjectId id) {
+        this.id = id;
+    }
 
     public Repository() {
         this.contributors = new ArrayList<>();

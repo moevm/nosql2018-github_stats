@@ -9,9 +9,6 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GithubCommit {
     @Id
-    @JsonProperty("node_id")
-    private String id;
-
     private String date;
 
     private String contributor;
@@ -30,14 +27,6 @@ public class GithubCommit {
 
     public void setContributor(String contributor) {
         this.contributor = contributor;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     @SuppressWarnings("unchecked")
