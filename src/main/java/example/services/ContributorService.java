@@ -2,14 +2,13 @@ package example.services;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
+import example.constants.Constant;
 import example.converters.github.JsonCommitToGithubCommitConverter;
 import example.converters.mongo.GithubCommitToMongoCommitConverter;
 import example.database.MongoDB;
 import example.model.github.GithubCommit;
 import example.model.mongo.Contributor;
-import example.model.mongo.Course;
 import example.model.mongo.MongoCommit;
-import example.model.mongo.Repository;
 import example.repository.CourseRepository;
 import example.rest.GithubRestClient;
 import org.bson.Document;
@@ -18,6 +17,7 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -25,10 +25,12 @@ public class ContributorService {
     @Autowired
     CourseRepository courseRepository;
 
-    private void checkForExistenceRepoOrContributorAndCreateOtherwise(String repoName,
-                                                                      String contributor,
-                                                                      String repoOwner) {
+    private void checkForExistenceContributorAndCreateOtherwise(ObjectId courseId,
+                                                                String repoName,
+                                                                String contributor,
+                                                                String repoOwner) {
         FindIterable mongoContributor = MongoDB.courses.find(new Document()
+                .append("_id", courseId)
                 .append("repositories", new Document()
                         .append("$elemMatch", new Document()
                                 .append("name", repoName)
@@ -39,6 +41,7 @@ public class ContributorService {
 
         if (!mongoContributor.iterator().hasNext()){
             Bson where = new Document()
+                    .append("_id", courseId)
                     .append("repositories", new Document()
                             .append("$elemMatch", new Document()
                                     .append("name", repoName)
@@ -53,11 +56,14 @@ public class ContributorService {
         }
     }
 
-    private void updateCommits(String repoOwner, String repoName, String since){
+    private void updateCommits(ObjectId courseId, String repoOwner, String repoName, Date since){
 
         List<Contributor> contributors = new ArrayList<>();
 
-        String commitsJson = GithubRestClient.get("/repos/" + repoOwner + "/" + repoName + "/commits" + "?since=" + since);
+        String commitsJson = GithubRestClient.get(Constant.COMMITS_URI
+                .replace(Constant.REPOSITORY_OWNER_PATTERN, repoOwner)
+                .replace(Constant.REPOSITORY_NAME_PATTERN, repoName)
+                .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since)));
 
         List<GithubCommit> githubCommits = JsonCommitToGithubCommitConverter.convert(commitsJson);
 
@@ -87,10 +93,11 @@ public class ContributorService {
         }
 
         for (Contributor contributor : contributors){
-            checkForExistenceRepoOrContributorAndCreateOtherwise(repoName,
+            checkForExistenceContributorAndCreateOtherwise(courseId, repoName,
                     contributor.getName(), repoOwner);
 
-            Bson where = new Document();
+            Bson where = new Document()
+                    .append("_id", courseId);
 
             List<Bson> commits = new ArrayList<>();
             for (MongoCommit commit : contributor.getCommits()){
@@ -116,8 +123,8 @@ public class ContributorService {
         }
     }
 
-    public void updateContributorsOfRepository(String owner, String repo, String since) {
-        updateCommits(owner, repo, since);
+    public void updateContributorsOfRepository(ObjectId courseId, String owner, String repo, Date since) {
+        updateCommits(courseId, owner, repo, since);
     }
 
     public List<Contributor> getContributors(ObjectId courseId, ObjectId repositoryId){

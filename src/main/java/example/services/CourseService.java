@@ -11,9 +11,13 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,38 +28,57 @@ public class CourseService {
     @Autowired
     CourseRepository courseRepository;
 
-    public void updateCourse(ObjectId id){
+    public void updateCourse(ObjectId id) {
 
         Course course = courseRepository.findById(id.toString()).get();
 
-        String oldLastUpdate = course.getLastUpdate();
-        String newLastUpdate = LocalDateTime.now(ZoneOffset.UTC)
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        Date oldLastUpdate = course.getLastUpdate();
+        Date newLastUpdate = null;
+        try {
+            newLastUpdate = new SimpleDateFormat(Constant.DATE_PATTERN).parse(LocalDateTime.now(ZoneOffset.UTC)
+                    .format(DateTimeFormatter.ofPattern(Constant.DATE_PATTERN)));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         updateLastUpdate(id, newLastUpdate);
 
         try {
-            repositoryService.updateRepositories(course.getRepositories(), oldLastUpdate);
+            repositoryService.updateRepositories(id, course.getRepositories(), oldLastUpdate);
         } catch (Exception e){
             updateLastUpdate(id, oldLastUpdate);
         }
     }
 
-    public ObjectId createCourse(String name, List<Repository> repositories){
-        Course course = new Course();
+    public Course createCourse(String name, List<Repository> repositories) {
         ObjectId courseId = new ObjectId();
-        course.setName(name);
-        course.setId(courseId);
-        course.setLastUpdate(Constant.INITIAL_LAST_UPDATE);
-        course.setRepositories(repositories);
 
-        courseRepository.save(course);
-        updateCourse(courseId);
+        try {
+            List<Document> mongoRepositories = new ArrayList<>();
+            repositories.forEach(repository -> mongoRepositories.add(new Document()
+                    .append("_id", repository.getId())
+                    .append("name", repository.getName())
+                    .append("owner", repository.getOwner())
+                    .append("contributors", repository.getContributors())));
 
-        return courseId;
+            Document course = new Document()
+                    .append("_id", courseId)
+                    .append("name", name)
+                    .append("lastUpdate", new SimpleDateFormat(Constant.DATE_PATTERN).parse(Constant.INITIAL_LAST_UPDATE))
+                    .append("repositories", mongoRepositories);
+
+            MongoDB.courses.insertOne(course);
+
+            updateCourse(courseId);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return courseRepository.findById(courseId.toString()).get();
     }
 
-    public void updateLastUpdate(ObjectId courseId, String lastUpdate){
+    public void updateLastUpdate(ObjectId courseId, Date lastUpdate){
         Bson where = new Document()
                 .append("_id", courseId);
         Bson update = new Document()

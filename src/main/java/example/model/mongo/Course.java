@@ -2,8 +2,10 @@ package example.model.mongo;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class Course {
@@ -14,13 +16,13 @@ public class Course {
 
     private List<Repository> repositories;
 
-    private String lastUpdate;
+    private Date lastUpdate;
 
-    public String getLastUpdate() {
+    public Date getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(String lastUpdate) {
+    public void setLastUpdate(Date lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
 

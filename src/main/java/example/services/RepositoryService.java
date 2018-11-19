@@ -12,6 +12,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -27,14 +30,15 @@ public class RepositoryService {
     @Autowired
     CourseService courseService;
 
-    public void updateRepositories(List<Repository> repositories, String since){
-        repositories.forEach(repository -> updateRepository(repository, since));
+    public void updateRepositories(ObjectId courseId, List<Repository> repositories, Date since){
+        repositories.forEach(repository -> updateRepository(courseId, repository, since));
     }
 
-    private void updateRepository(Repository repository, String since){
-        contributorService.updateContributorsOfRepository(repository.getOwner(),
-                        repository.getName(),
-                        since);
+    private void updateRepository(ObjectId courseId, Repository repository, Date since){
+        contributorService.updateContributorsOfRepository(courseId,
+                repository.getOwner(),
+                repository.getName(),
+                since);
     }
 
     public List<Repository> getRepositories(ObjectId courseId){
@@ -70,8 +74,13 @@ public class RepositoryService {
                                     .append("contributors", repository.getContributors())));
             MongoDB.courses.updateOne(where, update, new UpdateOptions().upsert(true));
 
-            String currentLastUpdate = courseRepository.findById(courseId.toString()).get().getLastUpdate();
-            String initialLastUpdate = Constant.INITIAL_LAST_UPDATE;
+            Date currentLastUpdate = courseRepository.findById(courseId.toString()).get().getLastUpdate();
+            Date initialLastUpdate = null;
+            try {
+                initialLastUpdate = new SimpleDateFormat(Constant.DATE_PATTERN).parse(Constant.INITIAL_LAST_UPDATE);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
             courseService.updateLastUpdate(courseId, initialLastUpdate);
             courseService.updateCourse(courseId);

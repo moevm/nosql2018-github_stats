@@ -1,5 +1,6 @@
 package example.stub;
 
+import example.constants.Constant;
 import example.model.mongo.Course;
 import example.model.mongo.Repository;
 import example.repository.CourseRepository;
@@ -7,6 +8,8 @@ import example.services.CourseService;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class ExampleCreatingNewCourse {
@@ -17,7 +20,7 @@ public class ExampleCreatingNewCourse {
     @Autowired
     private CourseRepository courseRepository;
 
-    public void create(){
+    public void create() throws ParseException {
         //Создание нового репозитория
         Repository first = new Repository();
         first.setName("Test_for_NoSQL");
@@ -29,7 +32,7 @@ public class ExampleCreatingNewCourse {
         ObjectId courseId = new ObjectId();
         course.setName("TestCourse");
         course.setId(courseId);
-        course.setLastUpdate("1970-01-01T00:00:00Z");
+        course.setLastUpdate(new SimpleDateFormat(Constant.DATE_PATTERN).parse(Constant.INITIAL_LAST_UPDATE));
         course.setRepositories(new ArrayList<>());
         course.getRepositories().add(first);
         courseRepository.save(course);
