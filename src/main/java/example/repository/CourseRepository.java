@@ -16,4 +16,6 @@ public interface CourseRepository extends MongoRepository<Course, String> {
     Optional<Course> findByIdAndRepositoryIdAndContributorName(ObjectId courseId,
                                                                ObjectId repositoryId,
                                                                String contributorName);
+    @Query(value = "{'_id': ?0}", fields = "{'repositories.name': 1}")
+    Optional<Course> findRepositoryNames(ObjectId courseId);
 }

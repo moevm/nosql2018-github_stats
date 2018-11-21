@@ -8,12 +8,15 @@ public class Constant {
     //GitHub API
     public static final String API_URL = "https://api.github.com";
     public static final String COMMITS_URI = "/repos/" + Constant.REPOSITORY_OWNER_PATTERN +
-                                            "/" + Constant.REPOSITORY_NAME_PATTERN +
-                                            "/commits" +
-                                            "?since=" + Constant.SINCE_PATTERN;
+                                             "/" + Constant.REPOSITORY_NAME_PATTERN +
+                                             "/commits" +
+                                             "?since=" + Constant.SINCE_PATTERN;
+    public static final String REPO_URI = "/repos/" + Constant.REPOSITORY_OWNER_PATTERN +
+                                          "/" + Constant.REPOSITORY_NAME_PATTERN;
     public static final String REPOSITORY_OWNER_PATTERN = "{repositoryOwner}";
     public static final String REPOSITORY_NAME_PATTERN = "{repositoryName}";
     public static final String SINCE_PATTERN = "{since}";
+    public static final String NOT_FOUND = "Not Found";
 
 
     //Model

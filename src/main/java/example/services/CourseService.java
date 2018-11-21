@@ -19,6 +19,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CourseService {
@@ -27,6 +28,10 @@ public class CourseService {
 
     @Autowired
     CourseRepository courseRepository;
+
+    public Course getCourse(ObjectId courseId){
+        return courseRepository.findById(courseId.toString()).orElse(null);
+    }
 
     public void updateCourse(ObjectId id) {
 

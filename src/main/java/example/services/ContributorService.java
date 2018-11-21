@@ -77,9 +77,6 @@ public class ContributorService {
                 MongoCommit mongoCommit = GithubCommitToMongoCommitConverter.convert(githubCommit);
                 if (Objects.equals(currentContributorName, githubCommits.get(i).getContributor())){
                     currentContributor.getCommits().add(mongoCommit);
-                    if (i == githubCommits.size() - 1){
-                        contributors.add(currentContributor);
-                    }
                 } else {
                     if (currentContributor != null){
                         contributors.add(currentContributor);
@@ -88,6 +85,10 @@ public class ContributorService {
                     currentContributor = new Contributor();
                     currentContributor.setName(currentContributorName);
                     currentContributor.getCommits().add(mongoCommit);
+                }
+
+                if (i == githubCommits.size() - 1){
+                    contributors.add(currentContributor);
                 }
             }
         }

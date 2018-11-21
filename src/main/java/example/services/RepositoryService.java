@@ -4,8 +4,11 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import example.constants.Constant;
 import example.database.MongoDB;
+import example.model.mongo.Contributor;
+import example.model.mongo.Course;
 import example.model.mongo.Repository;
 import example.repository.CourseRepository;
+import example.rest.GithubRestClient;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
@@ -14,9 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 @Service
 public class RepositoryService {
@@ -102,5 +103,30 @@ public class RepositoryService {
                         .append("repositories", new Document()
                                 .append("_id", repositoryId)));
         MongoDB.courses.updateOne(where, update);
+    }
+
+    public boolean repositoriesExists(List<Repository> repositories){
+
+        for (Repository repository : repositories){
+            if ((GithubRestClient
+                    .get(Constant.REPO_URI
+                            .replace(Constant.REPOSITORY_NAME_PATTERN, repository.getName())
+                            .replace(Constant.REPOSITORY_OWNER_PATTERN, repository.getOwner()))) == null){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public List<String> getRepositoryNames(ObjectId courseId){
+        Optional<Course> course = courseRepository.findRepositoryNames(courseId);
+        List<String> repositoryNames = null;
+        if (course.isPresent()){
+            repositoryNames = new ArrayList<>();
+            for (Repository repository : course.get().getRepositories()){
+                repositoryNames.add(repository.getName());
+            }
+        }
+        return repositoryNames;
     }
 }
