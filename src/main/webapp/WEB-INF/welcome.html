@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <script src="/resources/js/modules/jquery-3.3.1.min.js"></script>
+    <script src="/resources/js/course.js"></script>
+</head>
+<body>
+<div class="jsCourseInputContainer">
+    <input type="text" class="jsCourseName" placeholder="Input course name">
+    <div class="jsRepositoryContainer">
+        <input type="text"
+               class="jsRepositoryName jsCurrentRepositoryName"
+               placeholder="Input repository name">
+        <input type="text"
+               class="jsRepositoryOwner jsCurrentRepositoryOwner"
+               placeholder="Input repository owner">
+    </div>
+    <button class="jsAddRepository">Add repository</button><br>
+    <button class="jsAddCourse">Create Course</button>
+    <br><br>
+</div>
+<div class="jsCourseResultContainer" hidden>
+    <table class="jsResultTable" border="px">
+        <tr>
+            <td>Repository</td>
+            <td>Count commits</td>
+        </tr>
+    </table>
+</div>
+</body>
+</html>

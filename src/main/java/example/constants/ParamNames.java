@@ -13,6 +13,7 @@ public class ParamNames {
     //Response params
     public static final String ERROR_KEY = "error";
     public static final String COURSE_KEY = "course";
+    public static final String COURSES_KEY = "courses";
     public static final String REPOSITORY_NAMES_KEY = "repositoryNames";
     public static final String CONTRIBUTORS_KEY = "contributors";
 }

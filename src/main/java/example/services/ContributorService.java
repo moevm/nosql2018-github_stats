@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class ContributorService {

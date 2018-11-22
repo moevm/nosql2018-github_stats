@@ -29,6 +29,10 @@ public class CourseService {
     @Autowired
     CourseRepository courseRepository;
 
+    public List<Course> getCourseCollection(){
+        return courseRepository.findAll();
+    }
+
     public Course getCourse(ObjectId courseId){
         return courseRepository.findById(courseId.toString()).orElse(null);
     }

@@ -20,6 +20,17 @@ public class RepositoryController {
     @Autowired
     ContributorService contributorService;
 
+    /*Get contributor list of repository
+    * PARAMS:
+    *
+    * courseId: String
+    * repositoryId: String
+    *
+    * RETURN VALUE:
+    *
+    * contributors: List of contributors
+    *      or
+    * error: String*/
     @RequestMapping(value = "/getContributors", method = RequestMethod.GET)
     public Map getContributors(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){

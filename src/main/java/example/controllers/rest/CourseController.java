@@ -26,6 +26,19 @@ public class CourseController {
     @Autowired
     RepositoryService repositoryService;
 
+    /*Add new course
+     * PARAMS:
+     *
+     * courseName: String
+     * repositories: List of objects with params
+     *      repositoryName: String
+     *      repositoryOwner: String
+     *
+     * RETURN VALUE:
+     *
+     * course: Course
+     *      or
+     * error: String*/
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public Map addCourse(@RequestBody Map<String, Object> body){
         Map<String, Object> response = new HashMap<>();
@@ -115,6 +128,41 @@ public class CourseController {
             response.put(ParamNames.COURSE_ID_KEY, courseId.toString());
         } catch (Exception e){
             e.printStackTrace();
+            response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        return response;
+    }
+
+    @RequestMapping(value = "/getAll", method = RequestMethod.GET)
+    public Map getAllCourses(){
+        Map<String, Object> response = new HashMap<>();
+
+        List<Course> courses = courseService.getCourseCollection();
+
+        response.put(ParamNames.COURSES_KEY, courses);
+
+        return response;
+    }
+
+    @RequestMapping(value = "/getRepositories", method = RequestMethod.GET)
+    public Map getRepositories(@RequestBody Map<String, Object> body,
+                                  HttpServletResponse httpServletResponse){
+        Map<String, Object> response = new HashMap<>();
+        ObjectId courseId ;
+        List<Repository> repositories = null;
+
+        try {
+            courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            repositories = repositoryService.getRepositories(courseId);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if (repositories != null){
+            response.put(ParamNames.REPOSITORIES_KEY, repositories);
+        } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }

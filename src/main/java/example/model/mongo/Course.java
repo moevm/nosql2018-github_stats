@@ -1,5 +1,7 @@
 package example.model.mongo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import example.utils.ObjectIdSerializer;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -10,6 +12,7 @@ import java.util.List;
 
 public class Course {
     @Id
+    @JsonSerialize(using = ObjectIdSerializer.class)
     private ObjectId id;
 
     private String name;
