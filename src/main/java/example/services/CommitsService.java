@@ -30,6 +30,7 @@ public class CommitsService {
                     .get(0)
                     .getCommits();
         } catch (NoSuchElementException e){
+            e.printStackTrace();
             System.out.println("No such file");
         }
         return commits;

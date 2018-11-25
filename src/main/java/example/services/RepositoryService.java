@@ -4,7 +4,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import example.constants.Constant;
 import example.database.MongoDB;
-import example.model.mongo.Contributor;
 import example.model.mongo.Course;
 import example.model.mongo.Repository;
 import example.repository.CourseRepository;
@@ -50,12 +49,13 @@ public class RepositoryService {
                     .get()
                     .getRepositories();
         } catch (NoSuchElementException e){
+            e.printStackTrace();
             System.out.println("No such file");
         }
         return repositories;
     }
 
-    public void addRepository(ObjectId courseId, Repository repository){
+    public Course addRepository(ObjectId courseId, Repository repository){
 
         FindIterable alreadyExists = MongoDB.courses.find(new Document()
                 .append("repositories", new Document()
@@ -86,23 +86,34 @@ public class RepositoryService {
             courseService.updateLastUpdate(courseId, initialLastUpdate);
             courseService.updateCourse(courseId);
             courseService.updateLastUpdate(courseId, currentLastUpdate);
+
+            return courseRepository.findById(courseId.toString()).get();
         }
         else {
             System.out.println("Repository with name:   " + repository.getName() +
                     "   and owner:  " + repository.getOwner() + "   already exists !");
+            return null;
         }
 
     }
 
-    public void deleteRepository(ObjectId courseId, ObjectId repositoryId){
-        Bson where = new Document()
-                .append("_id", courseId);
+    public Course deleteRepository(ObjectId courseId, ObjectId repositoryId){
 
-        Bson update = new Document()
-                .append("$pull", new Document()
-                        .append("repositories", new Document()
-                                .append("_id", repositoryId)));
-        MongoDB.courses.updateOne(where, update);
+        try {
+            Bson where = new Document()
+                    .append("_id", courseId);
+
+            Bson update = new Document()
+                    .append("$pull", new Document()
+                            .append("repositories", new Document()
+                                    .append("_id", repositoryId)));
+            MongoDB.courses.updateOne(where, update);
+
+            return courseRepository.findById(courseId.toString()).get();
+        } catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public boolean repositoriesExists(List<Repository> repositories){
@@ -112,10 +123,10 @@ public class RepositoryService {
                     .get(Constant.REPO_URI
                             .replace(Constant.REPOSITORY_NAME_PATTERN, repository.getName())
                             .replace(Constant.REPOSITORY_OWNER_PATTERN, repository.getOwner()))) == null){
-                return false;
+                return true;
             }
         }
-        return true;
+        return false;
     }
 
     public List<String> getRepositoryNames(ObjectId courseId){

@@ -55,6 +55,7 @@ public class CourseService {
         try {
             repositoryService.updateRepositories(id, course.getRepositories(), oldLastUpdate);
         } catch (Exception e){
+            e.printStackTrace();
             updateLastUpdate(id, oldLastUpdate);
         }
     }
@@ -101,5 +102,18 @@ public class CourseService {
                 .append("_id", courseId);
 
         MongoDB.courses.deleteOne(where);
+    }
+
+    public List<String> getCourseNames(){
+        Optional<List<Course>> courses = courseRepository.findCourseNames();
+        List<String> courseNames = new ArrayList<>();
+        if (courses.isPresent()){
+            courseNames = new ArrayList<>();
+            for (Course course : courses.get()){
+                courseNames.add(course.getName());
+            }
+        }
+
+        return courseNames;
     }
 }
