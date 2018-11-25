@@ -8,7 +8,9 @@ import example.converters.mongo.GithubCommitToMongoCommitConverter;
 import example.database.MongoDB;
 import example.model.github.GithubCommit;
 import example.model.mongo.Contributor;
+import example.model.mongo.Course;
 import example.model.mongo.MongoCommit;
+import example.model.mongo.Repository;
 import example.repository.CourseRepository;
 import example.rest.GithubRestClient;
 import org.bson.Document;
@@ -140,8 +142,21 @@ public class ContributorService {
                     .get(0)
                     .getContributors();
         } catch (NoSuchElementException e){
+            e.printStackTrace();
             System.out.println("No such file");
         }
         return contributors;
+    }
+
+    public List<String> getContributorNames(ObjectId courseId, ObjectId repositoryId){
+        Optional<Course> course = courseRepository.findContributorNames(courseId, repositoryId);
+        List<String> contributorNames = null;
+        if (course.isPresent()){
+            contributorNames = new ArrayList<>();
+            for (Contributor contributor : course.get().getRepositories().get(0).getContributors()){
+                contributorNames.add(contributor.getName());
+            }
+        }
+        return contributorNames;
     }
 }

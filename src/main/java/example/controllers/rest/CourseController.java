@@ -55,7 +55,7 @@ public class CourseController {
             repositories.add(mongoRepository);
         });
 
-        if (!repositoryService.repositoriesExists(repositories)){
+        if (repositoryService.repositoriesExists(repositories)){
             response.put(ParamNames.ERROR_KEY, ParamValues.REPOSITORY_DOES_NOT_EXIST);
         } else {
             Course course = courseService
@@ -67,15 +67,58 @@ public class CourseController {
         return response;
     }
 
+    /*Get course by id
+     * PARAMS:
+     *
+     * courseId: String
+     *
+     * RETURN VALUE:
+     *
+     * course: Course
+     *      or
+     * error: String*/
+    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    public Map getCourse(@RequestBody Map<String, Object> body,
+                         HttpServletResponse httpServletResponse){
+        Map<String, Object> response = new HashMap<>();
+
+        Course course = null;
+
+        try {
+            ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            course = courseService.getCourse(courseId);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+        if (course != null){
+            response.put(ParamNames.COURSE_KEY, course);
+        } else {
+            response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        return response;
+    }
+
+    /*Get names of all repositories of Course
+     * PARAMS:
+     *
+     * courseId: String
+     *
+     * RETURN VALUE:
+     *
+     * repositoryNames: List<String>
+     *      or
+     * error: String*/
     @RequestMapping(value = "/getRepositoryNames", method = RequestMethod.GET)
     public Map getRepositoryNames(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
-        ObjectId courseId ;
         List<String> repositories = null;
 
         try {
-            courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
             repositories = repositoryService.getRepositoryNames(courseId);
         } catch (Exception e){
             e.printStackTrace();
@@ -91,15 +134,24 @@ public class CourseController {
         return response;
     }
 
+    /*Update Course
+     * PARAMS:
+     *
+     * courseId: String
+     *
+     * RETURN VALUE:
+     *
+     * course: Course
+     *      or
+     * error: String*/
     @RequestMapping(value = "/updateCourse", method = RequestMethod.PUT)
     public Map updateCourse(@RequestBody Map<String, Object> body,
                             HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
-        ObjectId courseId;
         Course course = null;
 
         try {
-            courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
             courseService.updateCourse(courseId);
             course = courseService.getCourse(courseId);
         } catch (Exception e){
@@ -116,6 +168,16 @@ public class CourseController {
         return response;
     }
 
+    /*Delete Course
+     * PARAMS:
+     *
+     * courseId: String
+     *
+     * RETURN VALUE:
+     *
+     * course: Course
+     *      or
+     * error: String*/
     @RequestMapping(value = "/deleteCourse", method = RequestMethod.DELETE)
     public Map deleteCourse(@RequestBody Map<String, Object> body,
                             HttpServletResponse httpServletResponse){
@@ -135,6 +197,11 @@ public class CourseController {
         return response;
     }
 
+    /*Get list of courses
+     *
+     * RETURN VALUE:
+     *
+     * courses: List<Course>*/
     @RequestMapping(value = "/getAll", method = RequestMethod.GET)
     public Map getAllCourses(){
         Map<String, Object> response = new HashMap<>();
@@ -146,15 +213,24 @@ public class CourseController {
         return response;
     }
 
+    /*Get repositories of Course
+     * PARAMS:
+     *
+     * courseId: String
+     *
+     * RETURN VALUE:
+     *
+     * repositories: List<Repository>
+     *      or
+     * error: String*/
     @RequestMapping(value = "/getRepositories", method = RequestMethod.GET)
     public Map getRepositories(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
-        ObjectId courseId ;
         List<Repository> repositories = null;
 
         try {
-            courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
             repositories = repositoryService.getRepositories(courseId);
         } catch (Exception e){
             e.printStackTrace();
@@ -165,6 +241,88 @@ public class CourseController {
         } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        return response;
+    }
+
+    /*Get names of all existing courses
+     *
+     * RETURN VALUE:
+     *
+     * courses: List<String>*/
+    @RequestMapping(value = "/getCourseNames", method = RequestMethod.GET)
+    public Map getCourseNames(){
+        Map<String, Object> response = new HashMap<>();
+
+        List<String> courseNames = courseService.getCourseNames();
+        response.put(ParamNames.COURSE_NAMES_KEY, courseNames);
+
+        return response;
+    }
+
+    /*Add repository in Course
+     * PARAMS:
+     *
+     * courseId: String
+     * repositoryName: String
+     * repositoryOwner: String
+     *
+     * RETURN VALUE:
+     *
+     * course: Course
+     *      or
+     * error: String*/
+    @RequestMapping(value = "/addRepository", method = RequestMethod.POST)
+    public Map addRepository(@RequestBody Map<String, Object> body,
+                             HttpServletResponse httpServletResponse){
+        Map<String, Object> response = new HashMap<>();
+
+        ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+        Repository repository = new Repository();
+        repository.setId(new ObjectId());
+        repository.setName((String) body.get(ParamNames.REPOSITORY_NAME_KEY));
+        repository.setOwner((String) body.get(ParamNames.REPOSITORY_OWNER_KEY));
+
+        Course updatedCourse = repositoryService.addRepository(courseId, repository);
+
+        if (updatedCourse != null){
+            response.put(ParamNames.COURSE_KEY, updatedCourse);
+        } else {
+            response.put(ParamNames.ERROR_KEY, ParamValues.ERROR_ADDING_REPOSITORY);
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+        return response;
+
+    }
+
+    /*Delete repository from course
+     * PARAMS:
+     *
+     * courseId: String
+     * repositoryId: String
+     *
+     * RETURN VALUE:
+     *
+     * course: Course
+     *      or
+     * error: String*/
+    @RequestMapping(value = "/deleteRepository", method = RequestMethod.DELETE)
+    public Map deleteRepository(@RequestBody Map<String, Object> body,
+                                HttpServletResponse httpServletResponse){
+        Map<String, Object> response = new HashMap<>();
+
+        ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+        ObjectId repositoryId = new ObjectId((String) body.get(ParamNames.REPOSITORY_ID_KEY));
+
+        Course updatedCourse = repositoryService.deleteRepository(courseId, repositoryId);
+
+        if (updatedCourse != null){
+            response.put(ParamNames.COURSE_KEY, updatedCourse);
+        } else {
+            response.put(ParamNames.ERROR_KEY, ParamValues.ERROR_DELETING_REPOSITORY);
+            httpServletResponse.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
 
         return response;
