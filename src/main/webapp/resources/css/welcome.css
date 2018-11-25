@@ -1,0 +1,16 @@
+.jsCourseInputContainer{
+    width: 34%;
+    margin-left: 33%;
+    margin-top: 30px;
+}
+
+h1{
+    text-align: center;
+}
+
+.center {
+    margin-bottom: 15px;
+    position: relative;
+    margin-left: 30%;
+    width: 40%;
+}

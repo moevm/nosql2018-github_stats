@@ -1,0 +1,16 @@
+.jsCoursePageContainer{
+    margin-top: 30px;
+    width: 100%;
+}
+
+.jsGraphicsNavigation{
+    width: 25%;
+}
+
+.jsGraphicsArea{
+    width: 50%;
+}
+
+h1{
+    text-align: center;
+}
