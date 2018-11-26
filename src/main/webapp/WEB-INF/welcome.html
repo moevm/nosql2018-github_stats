@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Welcome</title>
     <script src="/resources/js/modules/jquery-3.3.1.min.js"></script>
-    <script src="/resources/js/course.js"></script>
+    <script src="/resources/js/welcome.js"></script>
     <link rel="stylesheet" href="/resources/css/navbar.css">
     <link rel="stylesheet" href="/resources/css/welcome.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -26,14 +26,16 @@
     <br>
 
         <input type="text" class="jsCourseName center" placeholder="Input course name">
-        <input type="text" class="jsRepositoryLink center" placeholder="Input repository name">
+        <div class="jsRepositoryContainer">
+            <input type="text" class="jsCurrentRepositoryLink jsRepositoryLink center" placeholder="Input repository link">
+        </div>
 
         <button class="jsAddRepository center">Add repository</button><br>
         <button class="jsAddCourse center">Create Course</button>
 
 </div>
 
-<div class="jsCourseResultContainer" hidden>
+<div class="jsCourseResultContainer">
     <table class="jsResultTable" border="px">
         <tr>
             <td>Repository</td>

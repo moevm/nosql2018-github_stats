@@ -40,7 +40,8 @@ public class CourseController {
      *      or
      * error: String*/
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public Map addCourse(@RequestBody Map<String, Object> body){
+    public Map addCourse(@RequestBody Map<String, Object> body,
+                         HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
         List<Repository> repositories = new ArrayList<>();
 
@@ -57,6 +58,7 @@ public class CourseController {
 
         if (repositoryService.repositoriesExists(repositories)){
             response.put(ParamNames.ERROR_KEY, ParamValues.REPOSITORY_DOES_NOT_EXIST);
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         } else {
             Course course = courseService
                     .createCourse((String) body
