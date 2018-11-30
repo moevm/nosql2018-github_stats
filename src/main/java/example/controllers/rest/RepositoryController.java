@@ -3,7 +3,9 @@ package example.controllers.rest;
 import example.constants.ParamNames;
 import example.constants.ParamValues;
 import example.model.mongo.Contributor;
+import example.model.mongo.IdAndName;
 import example.services.ContributorService;
+import example.utils.GraphDataParse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +33,7 @@ public class RepositoryController {
     * contributors: List<Contributor>
     *      or
     * error: String*/
-    @RequestMapping(value = "/getContributors", method = RequestMethod.GET)
+    @RequestMapping(value = "/getContributors", method = RequestMethod.POST)
     public Map getContributors(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
@@ -46,7 +48,7 @@ public class RepositoryController {
         }
 
         if (contributors != null){
-            response.put(ParamNames.CONTRIBUTORS_KEY, contributors);
+            response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseRepositoryToData(contributors));
         } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_OR_REPOSITORY_DOES_NOT_EXIST);
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -66,7 +68,7 @@ public class RepositoryController {
      * contributors: List<String>
      *      or
      * error: String*/
-    @RequestMapping(value = "/getContributorNames", method = RequestMethod.GET)
+    @RequestMapping(value = "/getContributorNames", method = RequestMethod.POST)
     public Map getContributorNames(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();

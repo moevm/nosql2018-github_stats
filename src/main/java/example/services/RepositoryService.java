@@ -5,6 +5,7 @@ import com.mongodb.client.model.UpdateOptions;
 import example.constants.Constant;
 import example.database.MongoDB;
 import example.model.mongo.Course;
+import example.model.mongo.IdAndName;
 import example.model.mongo.Repository;
 import example.repository.CourseRepository;
 import example.rest.GithubRestClient;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class RepositoryService {
@@ -129,14 +131,15 @@ public class RepositoryService {
         return false;
     }
 
-    public List<String> getRepositoryNames(ObjectId courseId){
+    public List<IdAndName> getRepositoryNames(ObjectId courseId){
         Optional<Course> course = courseRepository.findRepositoryNames(courseId);
-        List<String> repositoryNames = null;
+        List<IdAndName> repositoryNames = null;
         if (course.isPresent()){
-            repositoryNames = new ArrayList<>();
-            for (Repository repository : course.get().getRepositories()){
-                repositoryNames.add(repository.getName());
-            }
+            repositoryNames = course.get()
+                    .getRepositories()
+                    .stream()
+                    .map(rep -> new IdAndName(rep.getId().toString(), rep.getName()))
+                    .collect(Collectors.toList());
         }
         return repositoryNames;
     }

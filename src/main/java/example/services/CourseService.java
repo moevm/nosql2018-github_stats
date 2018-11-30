@@ -3,6 +3,7 @@ package example.services;
 import example.constants.Constant;
 import example.database.MongoDB;
 import example.model.mongo.Course;
+import example.model.mongo.IdAndName;
 import example.model.mongo.Repository;
 import example.repository.CourseRepository;
 import org.bson.Document;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CourseService {
@@ -104,14 +106,14 @@ public class CourseService {
         MongoDB.courses.deleteOne(where);
     }
 
-    public List<String> getCourseNames(){
+    public List<IdAndName> getCourseNames(){
         Optional<List<Course>> courses = courseRepository.findCourseNames();
-        List<String> courseNames = new ArrayList<>();
+        List<IdAndName> courseNames = new ArrayList<>();
         if (courses.isPresent()){
-            courseNames = new ArrayList<>();
-            for (Course course : courses.get()){
-                courseNames.add(course.getName());
-            }
+            courseNames = courses.get()
+                    .stream()
+                    .map(course -> new IdAndName(course.getId().toString(), course.getName()))
+                    .collect(Collectors.toList());
         }
 
         return courseNames;

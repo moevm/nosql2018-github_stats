@@ -14,3 +14,13 @@
 h1{
     text-align: center;
 }
+
+.jsLeftMenuItem.jsItemClicked {
+    color: red;
+    font-weight: bold;
+}
+
+.jsLeftMenuItem {
+    color: black;
+    font-weight: normal;
+}

@@ -32,7 +32,7 @@ public class ContributorController {
      * commits: List<MongoCommit>
      *      or
      * error: String*/
-    @RequestMapping(value = "/getCommits", method = RequestMethod.GET)
+    @RequestMapping(value = "/getCommits", method = RequestMethod.POST)
     public Map getCommits(@RequestBody Map<String, Object> body,
                                HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();

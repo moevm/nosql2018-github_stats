@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <title>Welcome</title>
     <script src="/resources/js/modules/jquery-3.3.1.min.js"></script>
+    <script src="/resources/js/constants.js"></script>
+    <script src="/resources/js/url_utils.js"></script>
+    <script src="/resources/js/dropdowns.js"></script>
     <script src="/resources/js/welcome.js"></script>
     <link rel="stylesheet" href="/resources/css/navbar.css">
     <link rel="stylesheet" href="/resources/css/welcome.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-light jsNavbar justify-content-between">
-    <select class="jsDropdown">
-        <option value="Choose course">Choose course</option>
-        <option value="Course">Course</option>
+    <select class="jsDropdown jsDropdownCourse">
+        <option value="default">Choose course</option>
     </select>
-
-    <button class="jsBack">Back</button>
 </nav>
 
 <div class="jsCourseInputContainer">
@@ -25,23 +26,15 @@
     <h1><b>You're welcome!</b></h1>
     <br>
 
-        <input type="text" class="jsCourseName center" placeholder="Input course name">
-        <div class="jsRepositoryContainer">
-            <input type="text" class="jsCurrentRepositoryLink jsRepositoryLink center" placeholder="Input repository link">
-        </div>
+    <input type="text" class="jsCourseName center" placeholder="Input course name">
+    <div class="jsRepositoryContainer">
+        <input type="text" class="jsCurrentRepositoryLink jsRepositoryLink center" placeholder="Input repository link">
+    </div>
 
-        <button class="jsAddRepository center">Add repository</button><br>
-        <button class="jsAddCourse center">Create Course</button>
+    <button class="jsAddRepository center">Add repository</button>
+    <br>
+    <button class="jsAddCourse center">Create Course</button>
 
-</div>
-
-<div class="jsCourseResultContainer">
-    <table class="jsResultTable" border="px">
-        <tr>
-            <td>Repository</td>
-            <td>Count commits</td>
-        </tr>
-    </table>
 </div>
 </body>
 </html>

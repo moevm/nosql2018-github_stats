@@ -3,10 +3,6 @@ package example.controllers.mvc;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-
 @Controller
 public class MappingController {
 
@@ -15,8 +11,8 @@ public class MappingController {
         return "welcome";
     }
 
-    @RequestMapping(value = "mainStatistics")
+    @RequestMapping(value = "stat")
     public String getCourseMainStatisticsCommits() {
-        return "mainStatistics";
+        return "stats";
     }
 }

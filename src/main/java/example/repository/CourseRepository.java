@@ -18,12 +18,12 @@ public interface CourseRepository extends MongoRepository<Course, String> {
                                                                ObjectId repositoryId,
                                                                String contributorName);
 
-    @Query(value = "{}", fields = "{'name': 1}")
+    @Query(value = "{}", fields = "{'repo': 1, 'name': 1}")
     Optional<List<Course>> findCourseNames();
 
-    @Query(value = "{'_id': ?0}", fields = "{'repositories.name': 1}")
+    @Query(value = "{'_id': ?0}", fields = "{'repositories.name': 1, 'repositories._id':1}")
     Optional<Course> findRepositoryNames(ObjectId courseId);
 
-    @Query(value = "{'_id': ?0, 'repositories._id': ?1}", fields = "{'repositories.contributors._id': 1}")
+    @Query(value = "{'_id': ?0, 'repositories._id': ?1}", fields = "{'repositories.contributors._id': 1, 'repositories._id':1}")
     Optional<Course> findContributorNames(ObjectId courseId, ObjectId repositoryId);
 }

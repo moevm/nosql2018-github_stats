@@ -7,10 +7,7 @@ import example.converters.github.JsonCommitToGithubCommitConverter;
 import example.converters.mongo.GithubCommitToMongoCommitConverter;
 import example.database.MongoDB;
 import example.model.github.GithubCommit;
-import example.model.mongo.Contributor;
-import example.model.mongo.Course;
-import example.model.mongo.MongoCommit;
-import example.model.mongo.Repository;
+import example.model.mongo.*;
 import example.repository.CourseRepository;
 import example.rest.GithubRestClient;
 import org.bson.Document;
@@ -21,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class ContributorService {
@@ -42,7 +39,7 @@ public class ContributorService {
                                         .append("$elemMatch", new Document()
                                                 .append("_id", contributor))))));
 
-        if (!mongoContributor.iterator().hasNext()){
+        if (!mongoContributor.iterator().hasNext()) {
             Bson where = new Document()
                     .append("_id", courseId)
                     .append("repositories", new Document()
@@ -59,7 +56,7 @@ public class ContributorService {
         }
     }
 
-    private void updateCommits(ObjectId courseId, String repoOwner, String repoName, Date since){
+    private void updateCommits(ObjectId courseId, String repoOwner, String repoName, Date since) {
 
         List<Contributor> contributors = new ArrayList<>();
 
@@ -70,18 +67,18 @@ public class ContributorService {
 
         List<GithubCommit> githubCommits = JsonCommitToGithubCommitConverter.convert(commitsJson);
 
-        if (githubCommits != null){
+        if (githubCommits != null) {
             githubCommits.sort(Comparator.comparing(GithubCommit::getContributor));
 
             String currentContributorName = null;
             Contributor currentContributor = null;
-            for (int i = 0; i < githubCommits.size(); ++i){
+            for (int i = 0; i < githubCommits.size(); ++i) {
                 GithubCommit githubCommit = githubCommits.get(i);
                 MongoCommit mongoCommit = GithubCommitToMongoCommitConverter.convert(githubCommit);
-                if (Objects.equals(currentContributorName, githubCommits.get(i).getContributor())){
+                if (Objects.equals(currentContributorName, githubCommits.get(i).getContributor())) {
                     currentContributor.getCommits().add(mongoCommit);
                 } else {
-                    if (currentContributor != null){
+                    if (currentContributor != null) {
                         contributors.add(currentContributor);
                     }
                     currentContributorName = githubCommit.getContributor();
@@ -90,13 +87,13 @@ public class ContributorService {
                     currentContributor.getCommits().add(mongoCommit);
                 }
 
-                if (i == githubCommits.size() - 1){
+                if (i == githubCommits.size() - 1) {
                     contributors.add(currentContributor);
                 }
             }
         }
 
-        for (Contributor contributor : contributors){
+        for (Contributor contributor : contributors) {
             checkForExistenceContributorAndCreateOtherwise(courseId, repoName,
                     contributor.getName(), repoOwner);
 
@@ -104,7 +101,7 @@ public class ContributorService {
                     .append("_id", courseId);
 
             List<Bson> commits = new ArrayList<>();
-            for (MongoCommit commit : contributor.getCommits()){
+            for (MongoCommit commit : contributor.getCommits()) {
                 commits.add(new Document()
                         .append("_id", commit.getDate()));
             }
@@ -113,7 +110,7 @@ public class ContributorService {
                     .append("$addToSet", new Document()
                             .append("repositories.$[i].contributors.$[j].commits",
                                     new Document().
-                                        append("$each", commits)));
+                                            append("$each", commits)));
 
             List<Bson> arrayFilters = Arrays.asList(new Document()
                             .append("i.name", repoName)
@@ -131,31 +128,46 @@ public class ContributorService {
         updateCommits(courseId, owner, repo, since);
     }
 
-    public List<Contributor> getContributors(ObjectId courseId, ObjectId repositoryId){
+    public List<Contributor> getContributors(ObjectId courseId, ObjectId repositoryId) {
 
         List contributors = null;
         try {
+
             contributors = courseRepository
                     .findByIdAndRepositoryId(courseId, repositoryId)
                     .get()
                     .getRepositories()
+                    .stream()
+                    .filter(repository -> repository.getId().equals(repositoryId))
+                    .collect(Collectors.toList())
                     .get(0)
                     .getContributors();
-        } catch (NoSuchElementException e){
+
+        } catch (NoSuchElementException e) {
             e.printStackTrace();
             System.out.println("No such file");
         }
         return contributors;
     }
 
-    public List<String> getContributorNames(ObjectId courseId, ObjectId repositoryId){
+    public List<String> getContributorNames(ObjectId courseId, ObjectId repositoryId) {
         Optional<Course> course = courseRepository.findContributorNames(courseId, repositoryId);
         List<String> contributorNames = null;
-        if (course.isPresent()){
-            contributorNames = new ArrayList<>();
-            for (Contributor contributor : course.get().getRepositories().get(0).getContributors()){
-                contributorNames.add(contributor.getName());
+        if (course.isPresent()) {
+            Optional<List<Contributor>> contributors = course.get().getRepositories()
+                    .stream()
+                    .filter(repository -> repository.getId().equals(repositoryId))
+                    .map(Repository::getContributors)
+                    .findFirst();
+
+            if (contributors.isPresent()) {
+                contributorNames = contributors
+                        .get()
+                        .stream()
+                        .map(Contributor::getName)
+                        .collect(Collectors.toList());
             }
+
         }
         return contributorNames;
     }

@@ -3,9 +3,11 @@ package example.controllers.rest;
 import example.constants.ParamNames;
 import example.constants.ParamValues;
 import example.model.mongo.Course;
+import example.model.mongo.IdAndName;
 import example.model.mongo.Repository;
 import example.services.CourseService;
 import example.services.RepositoryService;
+import example.utils.GraphDataParse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -79,7 +81,7 @@ public class CourseController {
      * course: Course
      *      or
      * error: String*/
-    @RequestMapping(value = "/get", method = RequestMethod.GET)
+    @RequestMapping(value = "/get", method = RequestMethod.POST)
     public Map getCourse(@RequestBody Map<String, Object> body,
                          HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
@@ -88,13 +90,14 @@ public class CourseController {
 
         try {
             ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            courseService.updateCourse(courseId);
             course = courseService.getCourse(courseId);
         } catch (Exception e){
             e.printStackTrace();
         }
 
         if (course != null){
-            response.put(ParamNames.COURSE_KEY, course);
+            response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseCourseToData(course));
         } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -113,11 +116,11 @@ public class CourseController {
      * repositoryNames: List<String>
      *      or
      * error: String*/
-    @RequestMapping(value = "/getRepositoryNames", method = RequestMethod.GET)
+    @RequestMapping(value = "/getRepositoryNames", method = RequestMethod.POST)
     public Map getRepositoryNames(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
-        List<String> repositories = null;
+        List<IdAndName> repositories = null;
 
         try {
             ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
@@ -225,7 +228,7 @@ public class CourseController {
      * repositories: List<Repository>
      *      or
      * error: String*/
-    @RequestMapping(value = "/getRepositories", method = RequestMethod.GET)
+    @RequestMapping(value = "/getRepositories", method = RequestMethod.POST)
     public Map getRepositories(@RequestBody Map<String, Object> body,
                                   HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
@@ -257,7 +260,7 @@ public class CourseController {
     public Map getCourseNames(){
         Map<String, Object> response = new HashMap<>();
 
-        List<String> courseNames = courseService.getCourseNames();
+        List<IdAndName> courseNames = courseService.getCourseNames();
         response.put(ParamNames.COURSE_NAMES_KEY, courseNames);
 
         return response;
