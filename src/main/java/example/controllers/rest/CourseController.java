@@ -58,14 +58,14 @@ public class CourseController {
             repositories.add(mongoRepository);
         });
 
-        if (repositoryService.repositoriesExists(repositories)){
-            response.put(ParamNames.ERROR_KEY, ParamValues.REPOSITORY_DOES_NOT_EXIST);
-            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-        } else {
+        if (repositoryService.areRepositoriesExists(repositories)){
             Course course = courseService
                     .createCourse((String) body
                             .get(ParamNames.COURSE_NAME_KEY), repositories);
             response.put(ParamNames.COURSE_KEY, course);
+        } else {
+            response.put(ParamNames.ERROR_KEY, ParamValues.REPOSITORY_DOES_NOT_EXIST);
+            httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         return response;

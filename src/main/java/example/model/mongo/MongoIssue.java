@@ -5,8 +5,8 @@ import example.model.mongo.abstractEntity.AnalyzedEntity;
 
 import java.util.Date;
 
-public class MongoCommit extends AnalyzedEntity {
-    public MongoCommit(Date date) {
+public class MongoIssue extends AnalyzedEntity {
+    public MongoIssue(Date date) {
         super(date);
     }
 }

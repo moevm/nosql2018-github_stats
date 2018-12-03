@@ -3,11 +3,14 @@ package example.services;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.UpdateOptions;
 import example.constants.Constant;
-import example.converters.github.JsonCommitToGithubCommitConverter;
+import example.converters.github.JsonToGithubEntityConverter;
 import example.converters.mongo.GithubCommitToMongoCommitConverter;
+import example.converters.mongo.GithubIssueOrPullRequestToMongoIssueOrPullRequestConverter;
 import example.database.MongoDB;
 import example.model.github.GithubCommit;
+import example.model.github.GithubIssueOrPullRequest;
 import example.model.mongo.*;
+import example.model.mongo.abstractEntity.AnalyzedEntity;
 import example.repository.CourseRepository;
 import example.rest.GithubRestClient;
 import org.bson.Document;
@@ -25,49 +28,30 @@ public class ContributorService {
     @Autowired
     CourseRepository courseRepository;
 
-    private void checkForExistenceContributorAndCreateOtherwise(ObjectId courseId,
-                                                                String repoName,
-                                                                String contributor,
-                                                                String repoOwner) {
-        FindIterable mongoContributor = MongoDB.courses.find(new Document()
-                .append("_id", courseId)
-                .append("repositories", new Document()
-                        .append("$elemMatch", new Document()
-                                .append("name", repoName)
-                                .append("owner", repoOwner)
-                                .append("contributors", new Document()
-                                        .append("$elemMatch", new Document()
-                                                .append("_id", contributor))))));
-
-        if (!mongoContributor.iterator().hasNext()) {
-            Bson where = new Document()
-                    .append("_id", courseId)
-                    .append("repositories", new Document()
-                            .append("$elemMatch", new Document()
-                                    .append("name", repoName)
-                                    .append("owner", repoOwner)));
-            Bson newContributor = new Document()
-                    .append("_id", contributor)
-                    .append("commits", new ArrayList<Bson>());
-            Bson updateContributor = new Document()
-                    .append("$addToSet", new Document()
-                            .append("repositories.$.contributors", newContributor));
-            MongoDB.courses.updateOne(where, updateContributor);
-        }
+    public void updateContributorsOfRepository(ObjectId courseId, String owner, String repo, Date since) {
+        updateCommits(courseId, owner, repo, since);
+        updateIssuesAndPullRequests(courseId, owner, repo, since);
     }
 
     private void updateCommits(ObjectId courseId, String repoOwner, String repoName, Date since) {
 
         List<Contributor> contributors = new ArrayList<>();
+        List<GithubCommit> githubCommits = new ArrayList<>();
 
-        String commitsJson = GithubRestClient.get(Constant.COMMITS_URI
-                .replace(Constant.REPOSITORY_OWNER_PATTERN, repoOwner)
-                .replace(Constant.REPOSITORY_NAME_PATTERN, repoName)
-                .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since)));
+        for (int page = 1; page < Integer.MAX_VALUE; page++){
+            String commitsJson = GithubRestClient.get(Constant.COMMITS_URI
+                    .replace(Constant.REPOSITORY_OWNER_PATTERN, repoOwner)
+                    .replace(Constant.REPOSITORY_NAME_PATTERN, repoName)
+                    .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since))
+                    .replace(Constant.PAGE_PATTERN, Integer.toString(page)));
+            if (commitsJson.equals("[]")){
+                break;
+            } else {
+                githubCommits.addAll(Objects.requireNonNull(JsonToGithubEntityConverter.convertCommits(commitsJson)));
+            }
+        }
 
-        List<GithubCommit> githubCommits = JsonCommitToGithubCommitConverter.convert(commitsJson);
-
-        if (githubCommits != null) {
+        if (githubCommits.size() != 0) {
             githubCommits.sort(Comparator.comparing(GithubCommit::getContributor));
 
             String currentContributorName = null;
@@ -101,7 +85,7 @@ public class ContributorService {
                     .append("_id", courseId);
 
             List<Bson> commits = new ArrayList<>();
-            for (MongoCommit commit : contributor.getCommits()) {
+            for (AnalyzedEntity commit : contributor.getCommits()) {
                 commits.add(new Document()
                         .append("_id", commit.getDate()));
             }
@@ -124,8 +108,143 @@ public class ContributorService {
         }
     }
 
-    public void updateContributorsOfRepository(ObjectId courseId, String owner, String repo, Date since) {
-        updateCommits(courseId, owner, repo, since);
+    private void updateIssuesAndPullRequests(ObjectId courseId, String repoOwner, String repoName, Date since) {
+
+        List<Contributor> contributors = new ArrayList<>();
+        List<GithubIssueOrPullRequest> githubIssuesAndPullRequests = new ArrayList<>();
+
+        for (int page = 1; page < Integer.MAX_VALUE; page++){
+            String issuesJson = GithubRestClient.get(Constant.ISSUES_URI
+                    .replace(Constant.REPOSITORY_OWNER_PATTERN, repoOwner)
+                    .replace(Constant.REPOSITORY_NAME_PATTERN, repoName)
+                    .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since))
+                    .replace(Constant.PAGE_PATTERN, Integer.toString(page)));
+            if (issuesJson.equals("[]")){
+                break;
+            } else {
+                githubIssuesAndPullRequests
+                        .addAll(Objects.requireNonNull(JsonToGithubEntityConverter
+                                .convertIssues(issuesJson)));
+            }
+        }
+
+        if (githubIssuesAndPullRequests.size() != 0) {
+            githubIssuesAndPullRequests.sort(Comparator.comparing(GithubIssueOrPullRequest::getLogin));
+
+            String currentContributorName = null;
+            Contributor currentContributor = null;
+            for (int i = 0; i < githubIssuesAndPullRequests.size(); ++i) {
+                GithubIssueOrPullRequest githubIssueOrPullRequest = githubIssuesAndPullRequests.get(i);
+                Map mongoIssueOrPullRequestMap = GithubIssueOrPullRequestToMongoIssueOrPullRequestConverter
+                        .convert(githubIssueOrPullRequest);
+                boolean isPullRequest = mongoIssueOrPullRequestMap.get(Constant.PULL_REQUEST_KEY) != null;
+                AnalyzedEntity mongoIssueOrPullRequest = (AnalyzedEntity) (isPullRequest
+                                        ? mongoIssueOrPullRequestMap.get(Constant.PULL_REQUEST_KEY)
+                                        : mongoIssueOrPullRequestMap.get(Constant.ISSUE_KEY));
+
+
+                if (Objects.equals(currentContributorName, githubIssuesAndPullRequests.get(i).getLogin())) {
+                    if (isPullRequest){
+                        currentContributor.getPullRequests().add((MongoPullRequest) mongoIssueOrPullRequest);
+                    } else {
+                        currentContributor.getIssues().add((MongoIssue) mongoIssueOrPullRequest);
+                    }
+                } else {
+                    if (currentContributor != null) {
+                        contributors.add(currentContributor);
+                    }
+                    currentContributorName = githubIssueOrPullRequest.getLogin();
+                    currentContributor = new Contributor();
+                    currentContributor.setName(currentContributorName);
+                    if (isPullRequest){
+                        currentContributor.getPullRequests().add((MongoPullRequest) mongoIssueOrPullRequest);
+                    } else {
+                        currentContributor.getIssues().add((MongoIssue) mongoIssueOrPullRequest);
+                    }
+                }
+
+                if (i == githubIssuesAndPullRequests.size() - 1) {
+                    contributors.add(currentContributor);
+                }
+            }
+        }
+
+        for (Contributor contributor : contributors) {
+            checkForExistenceContributorAndCreateOtherwise(courseId, repoName,
+                    contributor.getName(), repoOwner);
+
+            Bson where = new Document()
+                    .append("_id", courseId);
+
+            List<Bson> issues = new ArrayList<>();
+            for (AnalyzedEntity issue : contributor.getIssues()) {
+                issues.add(new Document()
+                        .append("_id", issue.getDate()));
+            }
+
+            List<Bson> pullRequests = new ArrayList<>();
+            for (AnalyzedEntity pullRequest : contributor.getPullRequests()) {
+                pullRequests.add(new Document()
+                        .append("_id", pullRequest.getDate()));
+            }
+
+            Bson updateIssues = new Document()
+                    .append("$addToSet", new Document()
+                            .append("repositories.$[i].contributors.$[j].issues",
+                                    new Document().
+                                            append("$each", issues)));
+
+            Bson updatePullRequests = new Document()
+                    .append("$addToSet", new Document()
+                            .append("repositories.$[i].contributors.$[j].pullRequests",
+                                    new Document().
+                                            append("$each", pullRequests)));
+
+            List<Bson> arrayFilters = Arrays.asList(new Document()
+                            .append("i.name", repoName)
+                            .append("i.owner", repoOwner),
+                    new Document()
+                            .append("j._id", contributor.getName()));
+
+            MongoDB.courses.updateOne(where, updateIssues, new UpdateOptions()
+                    .arrayFilters(arrayFilters)
+                    .upsert(true));
+
+            MongoDB.courses.updateOne(where, updatePullRequests, new UpdateOptions()
+                    .arrayFilters(arrayFilters)
+                    .upsert(true));
+        }
+    }
+
+    private void checkForExistenceContributorAndCreateOtherwise(ObjectId courseId,
+                                                                String repoName,
+                                                                String contributor,
+                                                                String repoOwner) {
+        FindIterable mongoContributor = MongoDB.courses.find(new Document()
+                .append("_id", courseId)
+                .append("repositories", new Document()
+                        .append("$elemMatch", new Document()
+                                .append("name", repoName)
+                                .append("owner", repoOwner)
+                                .append("contributors", new Document()
+                                        .append("$elemMatch", new Document()
+                                                .append("_id", contributor))))));
+
+        if (!mongoContributor.iterator().hasNext()) {
+            Bson where = new Document()
+                    .append("_id", courseId)
+                    .append("repositories", new Document()
+                            .append("$elemMatch", new Document()
+                                    .append("name", repoName)
+                                    .append("owner", repoOwner)));
+            Bson newContributor = new Document()
+                    .append("_id", contributor)
+                    .append("commits", new ArrayList<Bson>());
+            Bson updateContributor = new Document()
+                    .append("$addToSet", new Document()
+                            .append("repositories.$.contributors", newContributor));
+            MongoDB.courses.updateOne(where, updateContributor);
+        }
     }
 
     public List<Contributor> getContributors(ObjectId courseId, ObjectId repositoryId) {

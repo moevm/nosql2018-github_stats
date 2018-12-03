@@ -118,13 +118,13 @@ public class RepositoryService {
         }
     }
 
-    public boolean repositoriesExists(List<Repository> repositories){
+    public boolean areRepositoriesExists(List<Repository> repositories){
 
         for (Repository repository : repositories){
-            if ((GithubRestClient
-                    .get(Constant.REPO_URI
+            if (GithubRestClient
+                    .isRepoExists(Constant.REPO_URI
                             .replace(Constant.REPOSITORY_NAME_PATTERN, repository.getName())
-                            .replace(Constant.REPOSITORY_OWNER_PATTERN, repository.getOwner()))) == null){
+                            .replace(Constant.REPOSITORY_OWNER_PATTERN, repository.getOwner()))){
                 return true;
             }
         }

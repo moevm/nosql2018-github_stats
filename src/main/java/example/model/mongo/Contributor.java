@@ -11,8 +11,14 @@ public class Contributor {
 
     private List<MongoCommit> commits;
 
+    private List<MongoIssue> issues;
+
+    private List<MongoPullRequest> pullRequests;
+
     public Contributor(){
         commits = new ArrayList<>();
+        issues = new ArrayList<>();
+        pullRequests = new ArrayList<>();
     }
 
     public String getName() {
@@ -29,5 +35,21 @@ public class Contributor {
 
     public void setCommits(List<MongoCommit> commits) {
         this.commits = commits;
+    }
+
+    public List<MongoIssue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<MongoIssue> issues) {
+        this.issues = issues;
+    }
+
+    public List<MongoPullRequest> getPullRequests() {
+        return pullRequests;
+    }
+
+    public void setPullRequests(List<MongoPullRequest> pullRequests) {
+        this.pullRequests = pullRequests;
     }
 }

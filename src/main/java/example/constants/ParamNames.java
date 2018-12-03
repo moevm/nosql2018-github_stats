@@ -18,6 +18,8 @@ public class ParamNames {
     public static final String REPOSITORY_NAMES_KEY = "repositoryNames";
     public static final String CONTRIBUTORS_KEY = "contributors";
     public static final String COMMITS_KEY = "commits";
+    public static final String ISSUES_KEY = "issues";
+    public static final String PULL_REQUESTS_KEY = "pullRequests";
     public static final String COURSE_NAMES_KEY = "courseNames";
     public static final String CONTRIBUTOR_NAMES_KEY = "contributorNames";
 }

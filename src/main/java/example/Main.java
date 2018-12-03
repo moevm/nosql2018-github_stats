@@ -1,7 +1,6 @@
 package example;
 
 import example.repository.CourseRepository;
-import example.services.CommitsService;
 import example.services.ContributorService;
 import example.services.CourseService;
 import example.services.RepositoryService;
@@ -25,9 +24,6 @@ public class Main extends SpringBootServletInitializer
 
     @Autowired
     private ContributorService contributorService;
-
-    @Autowired
-    private CommitsService commitsService;
 
     @Autowired
     private CourseRepository courseRepository;
