@@ -1,6 +1,8 @@
 package example.model.mongo;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import example.constants.ItemType;
+import example.model.mongo.abstractEntity.AnalyzedEntity;
 import example.utils.ObjectIdSerializer;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
@@ -56,4 +58,5 @@ public class Course {
     public void setId(ObjectId id) {
         this.id = id;
     }
+
 }

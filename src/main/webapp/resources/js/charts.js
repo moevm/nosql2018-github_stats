@@ -6,8 +6,8 @@ function drawCircleDiagram(data) {
             datasets: [{
                 data: data.dataset,
                 backgroundColor: colors.map(addAlphaToColor),
-                borderColor: colors,
-                borderWidth: 1
+                borderColor: "#ffffff",
+                borderWidth: 3
             }],
 
             labels: data.labels
@@ -27,6 +27,25 @@ function drawTopDiagram(data) {
                 borderWidth: 1
             }],
             labels: data.labels
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            },
+            legend: {
+                display: false
+            },
+            tooltips: {
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.yLabel;
+                    }
+                }
+            }
         }
     });
 }
@@ -43,9 +62,9 @@ function drawTimeline(data) {
                     type: 'time',
                     distribution: 'series'
                 }],
-                yAxes : [{
-                    ticks : {
-                        min : 0
+                yAxes: [{
+                    ticks: {
+                        min: 0
                     }
                 }]
             }

@@ -10,6 +10,10 @@ function getCurrentContrId() {
     return new URLSearchParams(window.location.search).get(CONSTANT.STAT_CONTR_QUERY_ID)
 }
 
+function getCurrentItemType() {
+    return new URLSearchParams(window.location.search).get(CONSTANT.STAT_TYPE_QUERY_ID)
+}
+
 function redirectToCourse(courseId) {
     let searchParams = new URLSearchParams();
     searchParams.set(CONSTANT.STAT_COURSE_QUERY_ID, courseId);
@@ -36,6 +40,6 @@ function redirectToMain() {
 
 function changeItemType(newItemType) {
     let searchParams = new URLSearchParams(window.location.search);
-    searchParams.set(CONSTANT.STAT_CONTR_QUERY_ID, newItemType);
+    searchParams.set(CONSTANT.STAT_TYPE_QUERY_ID, newItemType);
     window.location.href = `${CONSTANT.STAT_URL}?${searchParams.toString()}`;
 }

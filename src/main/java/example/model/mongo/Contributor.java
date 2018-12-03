@@ -1,5 +1,7 @@
 package example.model.mongo;
 
+import example.constants.ItemType;
+import example.model.mongo.abstractEntity.AnalyzedEntity;
 import org.springframework.data.annotation.Id;
 
 import java.util.ArrayList;
@@ -51,5 +53,14 @@ public class Contributor {
 
     public void setPullRequests(List<MongoPullRequest> pullRequests) {
         this.pullRequests = pullRequests;
+    }
+
+    public List<? extends AnalyzedEntity> getItems(ItemType type) {
+        switch (type) {
+            case COMMIT: return commits;
+            case PULL_REQUEST: return pullRequests;
+            case ISSUE: return issues;
+        }
+        return null;
     }
 }

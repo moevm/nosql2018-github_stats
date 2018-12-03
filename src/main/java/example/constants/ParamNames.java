@@ -7,6 +7,7 @@ public class ParamNames {
     public static final String REPOSITORY_OWNER_KEY = "repositoryOwner";
     public static final String COURSE_NAME_KEY = "courseName";
     public static final String COURSE_ID_KEY = "courseId";
+    public static final String ITEM_TYPE = "itemType";
     public static final String REPOSITORY_ID_KEY = "repositoryId";
     public static final String CONTRIBUTOR_NAME_KEY = "contributorName";
 
@@ -16,10 +17,6 @@ public class ParamNames {
     public static final String COURSE_KEY = "course";
     public static final String COURSES_KEY = "courses";
     public static final String REPOSITORY_NAMES_KEY = "repositoryNames";
-    public static final String CONTRIBUTORS_KEY = "contributors";
-    public static final String COMMITS_KEY = "commits";
-    public static final String ISSUES_KEY = "issues";
-    public static final String PULL_REQUESTS_KEY = "pullRequests";
     public static final String COURSE_NAMES_KEY = "courseNames";
     public static final String CONTRIBUTOR_NAMES_KEY = "contributorNames";
 }

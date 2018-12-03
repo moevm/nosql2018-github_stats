@@ -17,12 +17,8 @@ public class AnalyzedEntityService {
     @Autowired
     CourseRepository courseRepository;
 
-    public List<? extends AnalyzedEntity> getAnalyzedEntities(ObjectId courseId,
-                                                    ObjectId repositoryId,
-                                                    String contributorName,
-                                                    String entity) {
+    public Contributor getContributor(ObjectId courseId, ObjectId repositoryId, String contributorName) {
         Contributor contributor = null;
-        List<? extends AnalyzedEntity> analyzedEntities = null;
         try {
             contributor = courseRepository
                     .findByIdAndRepositoryIdAndContributorName(courseId,
@@ -44,16 +40,6 @@ public class AnalyzedEntityService {
             System.out.println("No such file");
         }
 
-        switch (entity) {
-            case Constant.COMMIT_KEY:
-                analyzedEntities = contributor.getCommits();
-                break;
-            case Constant.ISSUE_KEY:
-                analyzedEntities = contributor.getIssues();
-                break;
-            case Constant.PULL_REQUEST_KEY:
-                analyzedEntities = contributor.getPullRequests();
-        }
-        return analyzedEntities;
+        return contributor;
     }
 }

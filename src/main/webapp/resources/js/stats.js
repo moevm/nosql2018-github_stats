@@ -8,13 +8,14 @@ function loadInfoAndDrawCharts() {
     let courseId = getCurrentCourseId();
     let repId = getCurrentRepId();
     let contrId = getCurrentContrId();
+    let itemType = getCurrentItemType();
 
-    if (courseId != null && repId != null && contrId != null) {
-        loadContrInfoAndShow(courseId, repId, contrId)
-    } else if (courseId != null && repId != null) {
-        loadRepInfoAndShow(courseId, repId)
-    } else if (courseId != null) {
-        loadCourseInfoAndShow(courseId)
+    if (courseId != null && repId != null && contrId != null && itemType != null) {
+        loadContrInfoAndShow(courseId, repId, contrId, itemType)
+    } else if (courseId != null && repId != null && itemType != null) {
+        loadRepInfoAndShow(courseId, repId, itemType)
+    } else if (courseId != null && itemType != null) {
+        loadCourseInfoAndShow(courseId, itemType)
     }
 }
 
@@ -56,7 +57,7 @@ function deleteCurrentRep() {
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (result, status, xhr) {
-            redirectToCourse(getCurrentRepId())
+            redirectToCourse(getCurrentCourseId())
         },
         error: function (xhr, status, error) {
         }
@@ -66,9 +67,8 @@ function deleteCurrentRep() {
 function deleteCurrentCourse() {
     let data = {};
     data.courseId = getCurrentCourseId();
-    data.repositoryId = getCurrentRepId();
     $.ajax({
-        url: CONSTANT.URL + "/course/deteleCourse",
+        url: CONSTANT.URL + "/course/deleteCourse",
         type: "DELETE",
         data: JSON.stringify(data),
         contentType: "application/json",
@@ -80,9 +80,10 @@ function deleteCurrentCourse() {
     });
 }
 
-function loadCourseInfoAndShow(courseId) {
+function loadCourseInfoAndShow(courseId, itemType) {
     var data = {};
     data.courseId = courseId;
+    data.itemType = itemType;
 
     $.ajax({
         url: CONSTANT.URL + "/course/get",
@@ -99,10 +100,11 @@ function loadCourseInfoAndShow(courseId) {
     });
 }
 
-function loadRepInfoAndShow(courseId, repId) {
+function loadRepInfoAndShow(courseId, repId, itemType) {
     var data = {};
     data.courseId = courseId;
     data.repositoryId = repId;
+    data.itemType = itemType;
 
     $.ajax({
         url: CONSTANT.URL + "/repository/getContributors",
@@ -120,19 +122,20 @@ function loadRepInfoAndShow(courseId, repId) {
     });
 }
 
-function loadContrInfoAndShow(courseId, repId, contrId) {
+function loadContrInfoAndShow(courseId, repId, contrId, itemType) {
     var data = {};
     data.courseId = courseId;
     data.repositoryId = repId;
     data.contributorName = contrId;
+    data.itemType = itemType;
 
     $.ajax({
-        url: CONSTANT.URL + "/contributor/getCommits",
+        url: CONSTANT.URL + "/contributor/getItems",
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json",
         success: function (result, status, xhr) {
-
+            drawTimeline({dataset: result.result.timeline.dataset, labels: result.result.timeline.labels});
         },
         error: function (xhr, status, error) {
         }

@@ -1,5 +1,6 @@
 package example.controllers.rest;
 
+import example.constants.ItemType;
 import example.constants.ParamNames;
 import example.constants.ParamValues;
 import example.model.mongo.Course;
@@ -47,8 +48,7 @@ public class CourseController {
         Map<String, Object> response = new HashMap<>();
         List<Repository> repositories = new ArrayList<>();
 
-        List<Map<String, String>> requestBodyRepositories =
-                ((List) body.get(ParamNames.REPOSITORIES_KEY));
+        List<Map<String, String>> requestBodyRepositories = ((List) body.get(ParamNames.REPOSITORIES_KEY));
         requestBodyRepositories.forEach(requestBodyRepository -> {
             Repository mongoRepository = new Repository();
             mongoRepository.setId(new ObjectId());
@@ -87,9 +87,11 @@ public class CourseController {
         Map<String, Object> response = new HashMap<>();
 
         Course course = null;
+        ItemType type = null;
 
         try {
             ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
+            type = ItemType.Companion.getByName((String) body.get(ParamNames.ITEM_TYPE));
             courseService.updateCourse(courseId);
             course = courseService.getCourse(courseId);
         } catch (Exception e){
@@ -97,7 +99,7 @@ public class CourseController {
         }
 
         if (course != null){
-            response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseCourseToData(course));
+            response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseCourseToData(course, type));
         } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);

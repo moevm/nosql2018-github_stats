@@ -1,9 +1,9 @@
 package example.controllers.rest;
 
+import example.constants.ItemType;
 import example.constants.ParamNames;
 import example.constants.ParamValues;
 import example.model.mongo.Contributor;
-import example.model.mongo.IdAndName;
 import example.services.ContributorService;
 import example.utils.GraphDataParse;
 import org.bson.types.ObjectId;
@@ -23,32 +23,33 @@ public class RepositoryController {
     ContributorService contributorService;
 
     /*Get contributors of repository
-    * PARAMS:
-    *
-    * courseId: String
-    * repositoryId: String
-    *
-    * RETURN VALUE:
-    *
-    * contributors: List<Contributor>
-    *      or
-    * error: String*/
+     * PARAMS:
+     *
+     * courseId: String
+     * repositoryId: String
+     *
+     * RETURN VALUE:
+     *
+     * contributors: List<Contributor>
+     *      or
+     * error: String*/
     @RequestMapping(value = "/getContributors", method = RequestMethod.POST)
-    public Map getContributors(@RequestBody Map<String, Object> body,
-                                  HttpServletResponse httpServletResponse){
+    public Map getContributors(@RequestBody Map<String, Object> body, HttpServletResponse httpServletResponse) {
         Map<String, Object> response = new HashMap<>();
         List<Contributor> contributors = null;
+        ItemType type = null;
 
         try {
             ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
             ObjectId repositoryId = new ObjectId((String) body.get(ParamNames.REPOSITORY_ID_KEY));
+            type = ItemType.Companion.getByName((String) body.get(ParamNames.ITEM_TYPE));
             contributors = contributorService.getContributors(courseId, repositoryId);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (contributors != null){
-            response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseRepositoryToData(contributors));
+        if (contributors != null) {
+            response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseRepositoryToData(contributors, type));
         } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_OR_REPOSITORY_DOES_NOT_EXIST);
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -69,8 +70,7 @@ public class RepositoryController {
      *      or
      * error: String*/
     @RequestMapping(value = "/getContributorNames", method = RequestMethod.POST)
-    public Map getContributorNames(@RequestBody Map<String, Object> body,
-                                  HttpServletResponse httpServletResponse){
+    public Map getContributorNames(@RequestBody Map<String, Object> body, HttpServletResponse httpServletResponse) {
         Map<String, Object> response = new HashMap<>();
         List<String> contributorNames = null;
 
@@ -78,11 +78,11 @@ public class RepositoryController {
             ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
             ObjectId repositoryId = new ObjectId((String) body.get(ParamNames.REPOSITORY_ID_KEY));
             contributorNames = contributorService.getContributorNames(courseId, repositoryId);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (contributorNames != null){
+        if (contributorNames != null) {
             response.put(ParamNames.CONTRIBUTOR_NAMES_KEY, contributorNames);
         } else {
             response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_OR_REPOSITORY_DOES_NOT_EXIST);

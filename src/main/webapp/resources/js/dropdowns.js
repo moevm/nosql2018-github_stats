@@ -2,17 +2,27 @@ $(document).ready(function () {
     let courseId = getCurrentCourseId();
     let repId = getCurrentRepId();
     let contrId = getCurrentContrId();
+    let itemType = getCurrentItemType();
 
     $(SELECTOR.DROPDOWN_TYPE).toggle(courseId !== null);
 
     setupCourseDropdown(courseId, repId, contrId);
     setupRepDropdown(courseId, repId, contrId);
     setupContrDropdown(courseId, repId, contrId);
+    setupItemTypeDropDown(itemType);
 });
 
 function setTitle(title) {
     $(SELECTOR.TITLE).append(title)
 }
+
+function setupItemTypeDropDown(itemType) {
+    $(SELECTOR.DROPDOWN_TYPE).val(itemType);
+    $(SELECTOR.DROPDOWN_TYPE).change(function () {
+        changeItemType($(SELECTOR.DROPDOWN_TYPE).val())
+    });
+}
+
 function setupCourseDropdown(courseId, repId, contrId) {
     $.ajax({
         url: CONSTANT.URL + "/course/getCourseNames",
