@@ -39,7 +39,9 @@ let SELECTOR = {
     CANVAS_TOP: '.jsChartTopCanvas',
     CANVAS_TIMELINE: '.jsChartTimelineCanvas',
     CANVAS_CIRCLE: '.jsChartCircleCanvas',
-    TITLE: '.jsTitle'
+    TITLE: '.jsTitle',
+    LOGIN: '.jsLogin',
+    PASSWORD: '.jsPassword'
 };
 
 let CLASS_WITHOUT_DOT = {

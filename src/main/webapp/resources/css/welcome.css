@@ -1,4 +1,5 @@
 .jsCourseInputContainer{
+    display: inline-block;
     width: 80%;
     margin-left: 10%;
     margin-top: 30px;
@@ -17,4 +18,23 @@ h1{
 
 .jsCourseResultContainer{
     display: none;
+}
+
+.jsCommonContainer{
+    white-space:nowrap;
+    overflow:hidden;
+    width:100%
+}
+
+.jsCredentialsContainer{
+    display: inline-block;
+    float: right;
+    margin: -200px 5% 0 0;
+}
+
+.center_credentials{
+    margin-bottom: 15px;
+    position: relative;
+    margin-left: 30%;
+    width: 90%;
 }

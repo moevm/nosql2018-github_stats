@@ -15,23 +15,19 @@ public class GithubRestClient {
 
     private static final RestTemplate restTemplate = new RestTemplate();
 
-    public static String get(String uri) {
+    public static String get(String uri, String credentials) {
         try {
-            String plainCreds = "vender98:qpc734b83ak47bdy";
-            byte[] plainCredsBytes = plainCreds.getBytes();
-            byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-            String base64Creds = new String(base64CredsBytes);
+            ResponseEntity<String> response;
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("Authorization", "Basic " + base64Creds);
+            if (credentials != null){
+                HttpEntity<String> request = createCredentialsRequest(credentials);
+                response = restTemplate.
+                        exchange(API_URL + uri, HttpMethod.GET, request, String.class);
+            } else {
+                response = restTemplate.
+                        getForEntity(API_URL + uri, String.class);
+            }
 
-            HttpEntity<String> request = new HttpEntity<String>(headers);
-
-            ResponseEntity<String> response
-                    = restTemplate.exchange(API_URL + uri, HttpMethod.GET, request, String.class);
-
-            /*ResponseEntity<String> response
-                    = restTemplate.getForEntity(API_URL + uri, String.class);*/
             return response.getBody();
         } catch (HttpClientErrorException e){
             System.out.println("Not Found");
@@ -39,28 +35,32 @@ public class GithubRestClient {
         }
     }
 
-    public static boolean isRepoExists(String uri){
-        String plainCreds = "vender98:qpc734b83ak47bdy";
-        byte[] plainCredsBytes = plainCreds.getBytes();
-        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
-        String base64Creds = new String(base64CredsBytes);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Basic " + base64Creds);
-
-        HttpEntity<String> request = new HttpEntity<String>(headers);
-
+    public static boolean isRepoExists(String uri, String credentials){
         try {
-            final String URL = (API_URL + uri);
-            ResponseEntity<String> response
-                    = restTemplate.exchange(URL, HttpMethod.GET, request, String.class);
-            /*ResponseEntity<String> response
-                    = restTemplate.getForEntity(URL, String.class);*/
+            if (credentials != null){
+                HttpEntity<String> request = createCredentialsRequest(credentials);
+                restTemplate.
+                        exchange(API_URL + uri, HttpMethod.GET, request, String.class);
+            } else {
+                restTemplate.
+                        getForEntity(API_URL + uri, String.class);
+            }
             return true;
         } catch (HttpClientErrorException e) {
             System.out.println("Not Found");
             return false;
         }
 
+    }
+
+    private static HttpEntity<String> createCredentialsRequest(String credentials) {
+        byte[] plainCredsBytes = credentials.getBytes();
+        byte[] base64CredsBytes = Base64.encodeBase64(plainCredsBytes);
+        String base64Creds = new String(base64CredsBytes);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Basic " + base64Creds);
+
+        return new HttpEntity<String>(headers);
     }
 }

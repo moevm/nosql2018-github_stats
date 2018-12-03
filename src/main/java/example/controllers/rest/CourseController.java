@@ -7,6 +7,7 @@ import example.model.mongo.Course;
 import example.model.mongo.IdAndName;
 import example.model.mongo.Repository;
 import example.services.CourseService;
+import example.services.CredentialsSession;
 import example.services.RepositoryService;
 import example.utils.GraphDataParse;
 import org.bson.types.ObjectId;
@@ -29,6 +30,9 @@ public class CourseController {
     @Autowired
     RepositoryService repositoryService;
 
+    @Autowired
+    CredentialsSession credentialsSession;
+
     /*Add new course
      * PARAMS:
      *
@@ -47,6 +51,9 @@ public class CourseController {
                          HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
         List<Repository> repositories = new ArrayList<>();
+
+        String credentials = (String) body.get("credentials");
+        credentialsSession.setCredentials(credentials);
 
         List<Map<String, String>> requestBodyRepositories = ((List) body.get(ParamNames.REPOSITORIES_KEY));
         requestBodyRepositories.forEach(requestBodyRepository -> {

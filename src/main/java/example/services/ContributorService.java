@@ -28,6 +28,9 @@ public class ContributorService {
     @Autowired
     CourseRepository courseRepository;
 
+    @Autowired
+    CredentialsSession credentialsSession;
+
     public void updateContributorsOfRepository(ObjectId courseId, String owner, String repo, Date since) {
         updateCommits(courseId, owner, repo, since);
         updateIssuesAndPullRequests(courseId, owner, repo, since);
@@ -37,13 +40,15 @@ public class ContributorService {
 
         List<Contributor> contributors = new ArrayList<>();
         List<GithubCommit> githubCommits = new ArrayList<>();
+        String credentials = credentialsSession.getCredentials();
 
         for (int page = 1; page < Integer.MAX_VALUE; page++){
             String commitsJson = GithubRestClient.get(Constant.COMMITS_URI
                     .replace(Constant.REPOSITORY_OWNER_PATTERN, repoOwner)
                     .replace(Constant.REPOSITORY_NAME_PATTERN, repoName)
                     .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since))
-                    .replace(Constant.PAGE_PATTERN, Integer.toString(page)));
+                    .replace(Constant.PAGE_PATTERN, Integer.toString(page)),
+                    credentials);
             if (commitsJson.equals("[]")){
                 break;
             } else {
@@ -112,13 +117,15 @@ public class ContributorService {
 
         List<Contributor> contributors = new ArrayList<>();
         List<GithubIssueOrPullRequest> githubIssuesAndPullRequests = new ArrayList<>();
+        String credentials = credentialsSession.getCredentials();
 
         for (int page = 1; page < Integer.MAX_VALUE; page++){
             String issuesJson = GithubRestClient.get(Constant.ISSUES_URI
                     .replace(Constant.REPOSITORY_OWNER_PATTERN, repoOwner)
                     .replace(Constant.REPOSITORY_NAME_PATTERN, repoName)
                     .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since))
-                    .replace(Constant.PAGE_PATTERN, Integer.toString(page)));
+                    .replace(Constant.PAGE_PATTERN, Integer.toString(page)),
+                    credentials);
             if (issuesJson.equals("[]")){
                 break;
             } else {
