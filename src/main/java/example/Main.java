@@ -4,13 +4,18 @@ import example.repository.CourseRepository;
 import example.services.ContributorService;
 import example.services.CourseService;
 import example.services.RepositoryService;
+import example.utils.FileStorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
+@EnableConfigurationProperties({
+        FileStorageProperties.class
+})
 public class Main extends SpringBootServletInitializer
                             //For debug
                             /*implements CommandLineRunner*/

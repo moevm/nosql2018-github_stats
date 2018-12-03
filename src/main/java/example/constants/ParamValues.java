@@ -9,4 +9,5 @@ public class ParamValues {
             "courseOrRepositoryOrContributorDoesNotExist";
     public static final String ERROR_ADDING_REPOSITORY = "errorAddingRepository";
     public static final String ERROR_DELETING_REPOSITORY = "errorDeletingRepository";
+    public static final String ERROR_IMPORTING_DATABASE = "errorImportingDatabase";
 }
