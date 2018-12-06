@@ -124,15 +124,15 @@ public class RepositoryService {
     public boolean areRepositoriesExists(List<Repository> repositories){
         String credentials = credentialsSession.getCredentials();
         for (Repository repository : repositories){
-            if (GithubRestClient
+            if (!GithubRestClient
                     .isRepoExists(Constant.REPO_URI
                             .replace(Constant.REPOSITORY_NAME_PATTERN, repository.getName())
                             .replace(Constant.REPOSITORY_OWNER_PATTERN, repository.getOwner()),
                             credentials)){
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public List<IdAndName> getRepositoryNames(ObjectId courseId){

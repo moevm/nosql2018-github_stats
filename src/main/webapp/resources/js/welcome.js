@@ -23,15 +23,24 @@ $(document).ready(function () {
             $repositoryLink = $(SELECTOR.REPOSITORY_LINK),
             repositoryLinkParsed = [];
 
-        $repositoryLink.each(function () {
-            // add filter to empty fields
-            repositoryLinkParsed.push({
-                repositoryOwner: $(this).val().split("https://github.com/")[1].split("/")[0],
-                repositoryName: $(this).val().split("https://github.com/")[1].split("/")[1]
-            })
-        });
-
         if ($courseName.val()) {
+            try {
+                $repositoryLink.each(function () {
+                    // add filter to empty fields
+                    if (!$(this).val().match(/^https:\/\/github.com\/[a-zA-Z0-9_\-]+\/[a-zA-Z0-9_\-]+$/)){
+                        throw new SyntaxError("Invalid link to git repository");
+                    }
+                    repositoryLinkParsed.push({
+                        repositoryOwner: $(this).val().split("https://github.com/")[1].split("/")[0],
+                        repositoryName: $(this).val().split("https://github.com/")[1].split("/")[1]
+                    })
+
+                });
+            } catch (e) {
+                onError(e.message);
+                return;
+            }
+
             var data = {};
             data.courseName = $courseName.val();
             data.repositories = repositoryLinkParsed;
@@ -48,8 +57,11 @@ $(document).ready(function () {
                     redirectToCourse(result.course.id)
                 },
                 error: function (xhr, status, error) {
+                    onError(xhr.responseJSON.error);
                 }
             });
+        } else {
+            onError("Input course name !");
         }
     });
 

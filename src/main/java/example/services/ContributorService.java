@@ -49,7 +49,7 @@ public class ContributorService {
                     .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since))
                     .replace(Constant.PAGE_PATTERN, Integer.toString(page)),
                     credentials);
-            if (commitsJson.equals("[]")){
+            if (commitsJson == null || commitsJson.equals("[]")){
                 break;
             } else {
                 githubCommits.addAll(Objects.requireNonNull(JsonToGithubEntityConverter.convertCommits(commitsJson)));
@@ -126,7 +126,7 @@ public class ContributorService {
                     .replace(Constant.SINCE_PATTERN, new SimpleDateFormat(Constant.DATE_PATTERN).format(since))
                     .replace(Constant.PAGE_PATTERN, Integer.toString(page)),
                     credentials);
-            if (issuesJson.equals("[]")){
+            if (issuesJson == null || issuesJson.equals("[]")){
                 break;
             } else {
                 githubIssuesAndPullRequests

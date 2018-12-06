@@ -60,6 +60,7 @@ function deleteCurrentRep() {
             redirectToCourse(getCurrentCourseId())
         },
         error: function (xhr, status, error) {
+            onError(xhr.responseJSON.error);
         }
     });
 }
@@ -96,6 +97,7 @@ function loadCourseInfoAndShow(courseId, itemType) {
             drawTimeline({dataset: result.result.timeline.dataset, labels: result.result.timeline.labels});
         },
         error: function (xhr, status, error) {
+            onError(xhr.responseJSON.error);
         }
     });
 }
@@ -118,6 +120,7 @@ function loadRepInfoAndShow(courseId, repId, itemType) {
 
         },
         error: function (xhr, status, error) {
+            onError(xhr.responseJSON.error);
         }
     });
 }
@@ -138,6 +141,7 @@ function loadContrInfoAndShow(courseId, repId, contrId, itemType) {
             drawTimeline({dataset: result.result.timeline.dataset, labels: result.result.timeline.labels});
         },
         error: function (xhr, status, error) {
+            onError(xhr.responseJSON.error);
         }
     });
 }
