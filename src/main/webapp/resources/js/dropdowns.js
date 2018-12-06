@@ -42,6 +42,7 @@ function setupCourseDropdown(courseId, repId, contrId) {
 
         },
         error: function (xhr, status, error) {
+            onError(xhr.responseJSON.error);
         }
     });
 
@@ -49,6 +50,8 @@ function setupCourseDropdown(courseId, repId, contrId) {
         let courseId = $(SELECTOR.DROPDOWN_COURSE).val();
         if (courseId !== DROPDOWN_CONSTANT.DEFAULT) {
             redirectToCourse(courseId)
+        } else {
+            redirectToMain();
         }
     });
 }
@@ -77,6 +80,7 @@ function setupRepDropdown(courseId, repId, contrId) {
                 }
             },
             error: function (xhr, status, error) {
+                onError(xhr.responseJSON.error);
             }
         });
 
@@ -114,6 +118,7 @@ function setupContrDropdown(courseId, repId, contrId) {
                 }
             },
             error: function (xhr, status, error) {
+                onError(xhr.responseJSON.error);
             }
         });
 

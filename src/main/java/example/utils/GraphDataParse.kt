@@ -58,7 +58,8 @@ object GraphDataParse {
         }
         val min = allItems.min()!!
         val max = allItems.max()!!
-        val points = allItems.size / groups.size / POINTS_DIVIDER
+        var points = allItems.size / groups.size / POINTS_DIVIDER
+        if (points == 0) points = 1
         val diff = (max - min) / points
         val listOfPoints = mutableListOf(min)
         for (i in (0 until points - 1)) {
