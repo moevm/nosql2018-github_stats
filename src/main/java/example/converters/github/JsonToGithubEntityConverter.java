@@ -42,7 +42,7 @@ public class JsonToGithubEntityConverter {
 
     public static GithubUser convertUser (String jsonUser){
         ObjectMapper mapper = new ObjectMapper();
-        GithubUser githubUser = null;
+        GithubUser githubUser;
         try {
             githubUser = mapper.readValue(jsonUser, GithubUser.class);
             return githubUser;

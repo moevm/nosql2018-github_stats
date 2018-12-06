@@ -30,7 +30,7 @@ public class GithubRestClient {
 
             return response.getBody();
         } catch (HttpClientErrorException e){
-            System.out.println("Not Found");
+            System.out.println("Not Found\n" + "Uri: " + uri);
             return null;
         }
     }
@@ -47,7 +47,7 @@ public class GithubRestClient {
             }
             return true;
         } catch (HttpClientErrorException e) {
-            System.out.println("Not Found");
+            System.out.println("Not Found\n" + "Uri: " + uri);
             return false;
         }
 

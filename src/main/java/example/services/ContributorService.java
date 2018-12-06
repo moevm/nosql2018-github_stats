@@ -60,18 +60,25 @@ public class ContributorService {
         if (githubCommits.size() != 0) {
             githubCommits.sort(Comparator.comparing(GithubCommit::getContributor));
 
+            String currentContributorLogin = null;
             String currentContributorName = null;
             Contributor currentContributor = null;
+            GithubUser currentGithubUser = null;
             for (int i = 0; i < githubCommits.size(); ++i) {
                 GithubCommit githubCommit = githubCommits.get(i);
                 MongoCommit mongoCommit = GithubCommitToMongoCommitConverter.convert(githubCommit);
-                if (Objects.equals(currentContributorName, githubCommits.get(i).getContributor())) {
+                if (Objects.equals(currentContributorLogin, githubCommit.getContributor())) {
                     currentContributor.getCommits().add(mongoCommit);
                 } else {
                     if (currentContributor != null) {
                         contributors.add(currentContributor);
                     }
-                    currentContributorName = githubCommit.getContributor();
+                    currentContributorLogin = githubCommit.getContributor();
+                    currentGithubUser = JsonToGithubEntityConverter.convertUser(GithubRestClient.get(Constant.USERS_URI
+                            .replace(Constant.USER_LOGIN_PATTERN, currentContributorLogin), credentials));
+                    currentContributorName = (currentGithubUser != null && currentGithubUser.getName() != null)
+                            ? currentGithubUser.getName()
+                            : currentContributorLogin;
                     currentContributor = new Contributor();
                     currentContributor.setName(currentContributorName);
                     currentContributor.getCommits().add(mongoCommit);
@@ -153,7 +160,7 @@ public class ContributorService {
                                         : mongoIssueOrPullRequestMap.get(Constant.ISSUE_KEY));
 
 
-                if (Objects.equals(currentContributorName, githubIssuesAndPullRequests.get(i).getLogin())) {
+                if (Objects.equals(currentContributorLogin, githubIssueOrPullRequest.getLogin())) {
                     if (isPullRequest){
                         currentContributor.getPullRequests().add((MongoPullRequest) mongoIssueOrPullRequest);
                     } else {
@@ -165,7 +172,7 @@ public class ContributorService {
                     }
                     currentContributorLogin = githubIssueOrPullRequest.getLogin();
                     currentGithubUser = JsonToGithubEntityConverter.convertUser(GithubRestClient.get(Constant.USERS_URI
-                                    .replace(Constant.USER_LOGIN_PATTERN, currentContributorLogin), null));
+                                    .replace(Constant.USER_LOGIN_PATTERN, currentContributorLogin), credentials));
                     currentContributorName = (currentGithubUser != null && currentGithubUser.getName() != null)
                             ? currentGithubUser.getName()
                             : currentContributorLogin;
