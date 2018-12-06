@@ -4,6 +4,14 @@ var CLASS = {
 
 $(document).ready(function () {
 
+    $(SELECTOR.BACKUP).on('click', function () {
+        getDump()
+    });
+
+    $(SELECTOR.BACKUP_TO_SERVER).on('click', function () {
+        loadDumpToServer()
+    });
+
     $(SELECTOR.ADD_REPOSITORY).on('click', function () {
         var $repositoryLink = $(SELECTOR.CURRENT_REPOSITORY_LINK);
 

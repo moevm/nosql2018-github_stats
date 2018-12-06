@@ -7,6 +7,7 @@
     <script src="/resources/js/modules/sweetalert2.all.min.js"></script>
     <script src="/resources/js/constants.js"></script>
     <script src="/resources/js/url_utils.js"></script>
+    <script src="/resources/js/importexport.js"></script>
     <script src="/resources/js/dropdowns.js"></script>
     <script src="/resources/js/welcome.js"></script>
     <script src="/resources/js/error.js"></script>
@@ -21,6 +22,10 @@
     <select class="jsDropdown jsDropdownCourse">
         <option value="default">Choose course</option>
     </select>
+
+    <div>
+        <button class="jsBackup">Get Backup</button>
+    </div>
 </nav>
 
 <div class="jsCommonContainer">
@@ -37,10 +42,16 @@
         <button class="jsAddRepository center">Add repository</button>
         <br>
         <button class="jsAddCourse center">Create Course</button>
+        <br>
+        <br>
+        <div class="jsLoadBackup">
+            <input class="jsFileChooser" type="file" id="input">
+            <input class="jsDropOld" type="checkbox" id="drop" name="drop">
+            <label for="drop">Drop old</label>
+            <button class="jsBackupToServer">Load</button>
+        </div>
 
     </div>
-
-    <div class="jsCourseResultContainer"></div>
 
     <div class="jsCredentialsContainer">
         <input type="text" class="jsLogin center_credentials" placeholder="Input login"><br>

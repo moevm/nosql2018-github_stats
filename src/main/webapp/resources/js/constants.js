@@ -41,6 +41,10 @@ let SELECTOR = {
     CANVAS_CIRCLE: '.jsChartCircleCanvas',
     TITLE: '.jsTitle',
     LOGIN: '.jsLogin',
+    BACKUP: '.jsBackup',
+    BACKUP_TO_SERVER: '.jsBackupToServer',
+    FILE_CHOOSER: '.jsFileChooser',
+    DROP_OLD: '.jsDropOld',
     PASSWORD: '.jsPassword'
 };
 
