@@ -1,5 +1,7 @@
 package example.constants;
 
+import org.apache.tomcat.util.bcel.Const;
+
 public class Constant {
     //Database
     public static final String DATABASE_NAME = "github";
@@ -24,6 +26,8 @@ public class Constant {
     public static final String SINCE_PATTERN = "{since}";
     public static final String PAGE_PATTERN = "{page}";
     public static final String NOT_FOUND = "Not Found";
+    public static final String USERS_URI = "/users/" + Constant.USER_LOGIN_PATTERN;
+    public static final String USER_LOGIN_PATTERN = "{login}";
 
 
     //Model

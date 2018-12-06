@@ -3,6 +3,7 @@ package example.converters.github;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import example.model.github.GithubCommit;
 import example.model.github.GithubIssueOrPullRequest;
+import example.model.github.GithubUser;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,17 @@ public class JsonToGithubEntityConverter {
             return githubIssuesAndPullRequests.size() > 0 ? githubIssuesAndPullRequests : null;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static GithubUser convertUser (String jsonUser){
+        ObjectMapper mapper = new ObjectMapper();
+        GithubUser githubUser = null;
+        try {
+            githubUser = mapper.readValue(jsonUser, GithubUser.class);
+            return githubUser;
+        } catch (Exception e) {
             return null;
         }
     }

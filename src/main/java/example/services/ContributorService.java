@@ -9,6 +9,7 @@ import example.converters.mongo.GithubIssueOrPullRequestToMongoIssueOrPullReques
 import example.database.MongoDB;
 import example.model.github.GithubCommit;
 import example.model.github.GithubIssueOrPullRequest;
+import example.model.github.GithubUser;
 import example.model.mongo.*;
 import example.model.mongo.abstractEntity.AnalyzedEntity;
 import example.repository.CourseRepository;
@@ -138,8 +139,10 @@ public class ContributorService {
         if (githubIssuesAndPullRequests.size() != 0) {
             githubIssuesAndPullRequests.sort(Comparator.comparing(GithubIssueOrPullRequest::getLogin));
 
+            String currentContributorLogin = null;
             String currentContributorName = null;
             Contributor currentContributor = null;
+            GithubUser currentGithubUser = null;
             for (int i = 0; i < githubIssuesAndPullRequests.size(); ++i) {
                 GithubIssueOrPullRequest githubIssueOrPullRequest = githubIssuesAndPullRequests.get(i);
                 Map mongoIssueOrPullRequestMap = GithubIssueOrPullRequestToMongoIssueOrPullRequestConverter
@@ -160,7 +163,12 @@ public class ContributorService {
                     if (currentContributor != null) {
                         contributors.add(currentContributor);
                     }
-                    currentContributorName = githubIssueOrPullRequest.getLogin();
+                    currentContributorLogin = githubIssueOrPullRequest.getLogin();
+                    currentGithubUser = JsonToGithubEntityConverter.convertUser(GithubRestClient.get(Constant.USERS_URI
+                                    .replace(Constant.USER_LOGIN_PATTERN, currentContributorLogin), null));
+                    currentContributorName = (currentGithubUser != null && currentGithubUser.getName() != null)
+                            ? currentGithubUser.getName()
+                            : currentContributorLogin;
                     currentContributor = new Contributor();
                     currentContributor.setName(currentContributorName);
                     if (isPullRequest){
