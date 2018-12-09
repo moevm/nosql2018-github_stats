@@ -4,10 +4,12 @@ import example.constants.ItemType
 import example.model.mongo.Contributor
 import example.model.mongo.Course
 import example.model.mongo.abstractEntity.AnalyzedEntity
+import org.joda.time.DateTime
 
 object GraphDataParse {
 
     private const val POINTS_DIVIDER = 1
+    private const val MIN_POINTS = 3
 
     fun parseCourseToData(course: Course, type: ItemType): GraphInfo {
         val topContributors = course.repositories
@@ -59,12 +61,20 @@ object GraphDataParse {
         val min = allItems.min()!!
         val max = allItems.max()!!
         var points = allItems.size / groups.size / POINTS_DIVIDER
-        if (points == 0) points = 1
+        if (points < MIN_POINTS) points = MIN_POINTS
         val diff = (max - min) / points
-        val listOfPoints = mutableListOf(min)
-        for (i in (0 until points - 1)) {
-            listOfPoints.add(listOfPoints.last() + diff)
+        val listOfPoints = mutableListOf<Long>()
+        if (min == max) {
+            listOfPoints.add(DateTime(min).minusDays(1).millis)
+            listOfPoints.add(min)
+            listOfPoints.add(DateTime(min).plusDays(1).millis)
+        } else {
+            listOfPoints.add(min)
+            for (i in (0 until points - 1)) {
+                listOfPoints.add(listOfPoints.last() + diff)
+            }
         }
+
         val listOfMidPoints = listOfPoints.map { it + diff / 2 }
         return TimelineGraphInfo(groups.map { (label, points) ->
             ChartInfo(
