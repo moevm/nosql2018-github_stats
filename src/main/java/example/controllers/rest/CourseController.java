@@ -7,7 +7,6 @@ import example.model.mongo.Course;
 import example.model.mongo.IdAndName;
 import example.model.mongo.Repository;
 import example.services.CourseService;
-import example.services.CredentialsSession;
 import example.services.RepositoryService;
 import example.utils.GraphDataParse;
 import org.bson.types.ObjectId;
@@ -30,9 +29,6 @@ public class CourseController {
     @Autowired
     RepositoryService repositoryService;
 
-    @Autowired
-    CredentialsSession credentialsSession;
-
     /*Add new course
      * PARAMS:
      *
@@ -51,9 +47,6 @@ public class CourseController {
                          HttpServletResponse httpServletResponse){
         Map<String, Object> response = new HashMap<>();
         List<Repository> repositories = new ArrayList<>();
-
-        String credentials = (String) body.get("credentials");
-        credentialsSession.setCredentials(credentials);
 
         List<Map<String, String>> requestBodyRepositories = ((List) body.get(ParamNames.REPOSITORIES_KEY));
         requestBodyRepositories.forEach(requestBodyRepository -> {
@@ -95,12 +88,14 @@ public class CourseController {
 
         Course course = null;
         ItemType type = null;
+        boolean isUpdated = false;
 
         try {
             ObjectId courseId = new ObjectId((String) body.get(ParamNames.COURSE_ID_KEY));
             type = ItemType.Companion.getByName((String) body.get(ParamNames.ITEM_TYPE));
-            courseService.updateCourse(courseId);
-            course = courseService.getCourse(courseId);
+            isUpdated = courseService.updateCourse(courseId);
+            if (isUpdated)
+                course = courseService.getCourse(courseId);
         } catch (Exception e){
             e.printStackTrace();
         }
@@ -108,7 +103,11 @@ public class CourseController {
         if (course != null){
             response.put(ParamNames.RESULT_KEY, GraphDataParse.INSTANCE.parseCourseToData(course, type));
         } else {
-            response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
+            if (!isUpdated){
+                response.put(ParamNames.ERROR_KEY, ParamValues.PERMISSION_DENIED);
+            } else {
+                response.put(ParamNames.ERROR_KEY, ParamValues.COURSE_DOES_NOT_EXIST);
+            }
             httpServletResponse.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         }
 

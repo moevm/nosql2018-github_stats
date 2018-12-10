@@ -10,4 +10,10 @@ public class ParamValues {
     public static final String ERROR_ADDING_REPOSITORY = "Error adding repository";
     public static final String ERROR_DELETING_REPOSITORY = "Error deleting repository";
     public static final String ERROR_IMPORTING_DATABASE = "Error importing database";
+    public static final String SUCCESS_SAVING_CREDENTIALS =
+            "Your credentials successfully saved in session";
+    public static final String SUCCESS_CLEARING_CREDENTIALS =
+            "Your credentials successfully cleared";
+    public static final String PERMISSION_DENIED =
+            "Permission denied ! You must login for watching this page !";
 }

@@ -97,7 +97,7 @@ function loadCourseInfoAndShow(courseId, itemType) {
             drawTimeline({dataset: result.result.timeline.dataset, labels: result.result.timeline.labels});
         },
         error: function (xhr, status, error) {
-            onError(xhr.responseJSON.error);
+            onError(xhr.responseJSON.error, redirectToMain);
         }
     });
 }

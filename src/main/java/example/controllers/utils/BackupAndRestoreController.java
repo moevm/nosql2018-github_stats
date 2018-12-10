@@ -77,7 +77,7 @@ public class BackupAndRestoreController {
                     "--collection " + Constant.COLLECTION_NAME + " " +
                     "--db " + Constant.DATABASE_NAME + " " +
                     (dropFlag ? "--drop " : "") +
-                    workingDir + "/dump/" + fileName + " ";
+                    workingDir + "/dump/" + "\"" + fileName + "\"" + " ";
             query += "&& rm -rf " + workingDir + "/dump/*";
 
             Process p = Runtime.getRuntime().exec(new String[]{"bash", "-c", query});

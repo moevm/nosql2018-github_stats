@@ -10,7 +10,9 @@
     <script src="/resources/js/importexport.js"></script>
     <script src="/resources/js/dropdowns.js"></script>
     <script src="/resources/js/welcome.js"></script>
-    <script src="/resources/js/error.js"></script>
+    <script src="/resources/js/errorPopup.js"></script>
+    <script src="/resources/js/successPopup.js"></script>
+    <script src="/resources/js/credentials.js"></script>
     <link rel="stylesheet" href="/resources/css/navbar.css">
     <link rel="stylesheet" href="/resources/css/welcome.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -54,8 +56,10 @@
     </div>
 
     <div class="jsCredentialsContainer">
-        <input type="text" class="jsLogin center_credentials" placeholder="Input login"><br>
-        <input type="password" class="jsPassword center_credentials" placeholder="Input password">
+        <input type="text" class="jsLogin jsCredentials center_credentials" placeholder="Input login"><br>
+        <input type="password" class="jsPassword jsCredentials center_credentials" placeholder="Input password"><br>
+        <button class="jsSaveCredentials center_credentials_button">Save</button>
+        <button class="jsClearCredentials center_credentials_button _hidden">Clear</button>
     </div>
 </div>
 </body>

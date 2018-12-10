@@ -1,3 +1,7 @@
+._hidden{
+    display: none;
+}
+
 .jsCourseInputContainer{
     display: inline-block;
     width: 80%;
@@ -37,4 +41,10 @@ h1{
     position: relative;
     margin-left: 30%;
     width: 90%;
+}
+
+.center_credentials_button{
+    margin-bottom: 15px;
+    position: relative;
+    margin-left: 30%;
 }

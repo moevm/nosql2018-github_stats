@@ -52,9 +52,6 @@ $(document).ready(function () {
             var data = {};
             data.courseName = $courseName.val();
             data.repositories = repositoryLinkParsed;
-            if (areCredentialsExists()){
-                data.credentials = getCredentials();
-            }
 
             $.ajax({
                 url: CONSTANT.URL + "/course/add",
@@ -72,17 +69,4 @@ $(document).ready(function () {
             onError("Input course name !");
         }
     });
-
-    function getCredentials() {
-        var login = $(SELECTOR.LOGIN).val();
-        var password = $(SELECTOR.PASSWORD).val();
-        return login + ":" + password;
-    }
-
-    function areCredentialsExists() {
-        var login = $(SELECTOR.LOGIN).val();
-        var password = $(SELECTOR.PASSWORD).val();
-
-        return !!(login && password);
-    }
 });

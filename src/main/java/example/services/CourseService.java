@@ -39,9 +39,13 @@ public class CourseService {
         return courseRepository.findById(courseId.toString()).orElse(null);
     }
 
-    public void updateCourse(ObjectId id) {
+    public boolean updateCourse(ObjectId id) {
 
         Course course = courseRepository.findById(id.toString()).get();
+
+        if (!repositoryService.areRepositoriesExists(course.getRepositories())){
+            return false;
+        }
 
         Date oldLastUpdate = course.getLastUpdate();
         Date newLastUpdate = null;
@@ -56,9 +60,11 @@ public class CourseService {
 
         try {
             repositoryService.updateRepositories(id, course.getRepositories(), oldLastUpdate);
+            return true;
         } catch (Exception e){
             e.printStackTrace();
             updateLastUpdate(id, oldLastUpdate);
+            return false;
         }
     }
 
