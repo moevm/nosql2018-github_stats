@@ -1,6 +1,6 @@
-#Instruction for building and deploying application locally on unix-based OS
+# Instruction for building and deploying application locally on unix-based OS
 
-##Pre Requirements:
+## Pre Requirements:
 
 1) You need to have installed locally [Maven](https://maven.apache.org/)
 **version 3.5.2** or higher and it must be setted to environment variable.
@@ -38,7 +38,7 @@ it should be started as a service with the following parameters:
     
     **It looks like you are trying to access MongoDB over HTTP on the native driver port.**
     
-    ####Note:
+    #### Note:
     If you want to set your own parameters, you need to change file
     ***src/main/resources/application.properties*** and specify
     * spring.data.mongodb.host={your_own_host_value}
@@ -48,14 +48,14 @@ it should be started as a service with the following parameters:
     * spring.data.mongodb.username={your_own_username}
     * spring.data.mongodb.password={your_own_password}
     
-##Installation and deploying
+## Installation and deploying
 
 1. git clone https://github.com/moevm/nosql2018-github_stats && cd ./nosql2018-github_stats
 2. mvn spring-boot:run
 
 After that application will start and deploy on localhost on port 8090
 
-####Note:
+#### Note:
 If you want to set your own port, you need to change file
 ***src/main/resources/application.properties*** and specify
 * server.port = {your_own_port}
