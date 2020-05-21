@@ -22,3 +22,5 @@ You can track some statistics by course (a set of repositories), by repository a
 
 *Statistics of contributors by course presented in pie chart*
 ![](images/course_contributors_comparing.png)
+
+Find more examples [here](./EXAMPLES.md)
