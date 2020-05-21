@@ -8,13 +8,13 @@ You can track some statistics by course (a set of repositories), by repository a
 
 ### Usage examples:
 
-*Statistics of commits frequncy by course*
+*Statistics of commits frequency by course*
 ![](images/commits_frequency_by_course.png)
 
-*Statistics of pull requests frequncy by course*
+*Statistics of pull requests frequency by course*
 ![](images/pull_requests_frequency_by_course.png)
 
-*Statistics of issues frequncy by course*
+*Statistics of issues frequency by course*
 ![](images/issues_frequency_by_course.png)
 
 *Statistics of contributors by course presented in bar chart*
